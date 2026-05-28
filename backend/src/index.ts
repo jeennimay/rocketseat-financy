@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import { ApolloServer } from '@apollo/server'
@@ -8,47 +9,31 @@ import { AuthResolver } from './resolvers/auth.resolver'
 import { CategoryResolver } from './resolvers/category.resolver'
 import { TransactionResolver } from './resolvers/transaction.resolver'
 import { buildContext } from './graphql/context'
+import { env } from './config/env'
 
 async function bootstrap() {
   const app = express()
 
-  app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-  }))
+  app.use(cors({ origin: env.corsOrigin, credentials: true }))
 
   const schema = await buildSchema({
-    resolvers: [
-      AuthResolver,
-      CategoryResolver,
-      TransactionResolver,
-    ],
+    resolvers: [AuthResolver, CategoryResolver, TransactionResolver],
     validate: false,
     emitSchemaFile: './schema.graphql',
   })
 
-  const server = new ApolloServer({
-    schema,
-  })
-
+  const server = new ApolloServer({ schema })
   await server.start()
 
   app.use(
     '/graphql',
     express.json(),
-    expressMiddleware(server, {
-      context: buildContext,
-    })
+    expressMiddleware(server, { context: buildContext }),
   )
 
-  app.listen(
-    {
-      port: 4000,
-    },
-    () => {
-      console.log(`Servidor iniciado na porta 4000!`)
-    }
-  )
+  app.listen({ port: env.port }, () => {
+    console.log(`Servidor iniciado na porta ${env.port}`)
+  })
 }
 
 bootstrap()

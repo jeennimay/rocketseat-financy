@@ -1,51 +1,44 @@
-import { UserModel } from '../models/user.model'
-import { prismaClient } from '../../prisma/prisma'
+import { UserRepository } from '../repositories/user.repository'
 import { LoginInput, RegisterInput } from '../dtos/input/auth.input'
+import { UserModel } from '../models/user.model'
 import { comparePassword, hashPassword } from '../utils/hash'
 import { signJwt } from '../utils/jwt'
+import { NotFoundError } from '../errors/NotFoundError'
+import { ConflictError } from '../errors/ConflictError'
+import { UnauthorizedError } from '../errors/UnauthorizedError'
 
 export class AuthService {
+  constructor(private userRepo = new UserRepository()) {}
+
   async login(data: LoginInput) {
-    const existingUser = await prismaClient.user.findUnique({
-      where: {
-        email: data.email,
-      },
-    })
-    if (!existingUser) throw new Error('Usuário não cadastrado!')
-    const compare = await comparePassword(data.password, existingUser.password)
-    if (!compare) throw new Error('Senha inválida!')
-    return this.gerenerateTokens(existingUser)
+    const user = await this.userRepo.findByEmail(data.email)
+    if (!user) throw new NotFoundError('Usuário')
+
+    const passwordMatch = await comparePassword(data.password, user.password)
+    if (!passwordMatch) throw new UnauthorizedError('Senha inválida')
+
+    return this.generateTokens(user)
   }
 
   async register(data: RegisterInput) {
-    const existingUser = await prismaClient.user.findUnique({
-      where: {
-        email: data.email,
-      },
-    })
-    if (existingUser) throw new Error('E-mail já cadastrado!')
+    const existing = await this.userRepo.findByEmail(data.email)
+    if (existing) throw new ConflictError('E-mail já cadastrado!')
 
-    const hash = await hashPassword(data.password)
+    const password = await hashPassword(data.password)
+    const user = await this.userRepo.create({ name: data.name, email: data.email, password })
 
-    const user = await prismaClient.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        password: hash,
-      },
-    })
-    return this.gerenerateTokens(user)
+    return this.generateTokens(user)
   }
 
   async me(userId: string): Promise<UserModel> {
-    const user = await prismaClient.user.findUnique({ where: { id: userId } })
-    if (!user) throw new Error('Usuário não encontrado!')
+    const user = await this.userRepo.findById(userId)
+    if (!user) throw new NotFoundError('Usuário')
     return user
   }
 
-  gerenerateTokens(user: UserModel) {
-    const token = signJwt({ id: user.id, email: user.email }, '1d')
-    const refreshToken = signJwt({ id: user.id, email: user.email }, '1d')
+  private generateTokens(user: UserModel) {
+    const token        = signJwt({ id: user.id, email: user.email }, '1d')
+    const refreshToken = signJwt({ id: user.id, email: user.email }, '7d')
     return { token, refreshToken, user }
   }
 }
