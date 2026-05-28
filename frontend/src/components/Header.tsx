@@ -18,12 +18,12 @@ export function Header() {
 
   return (
     <header className="w-full border-b border-gray-200 bg-white">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-8">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/">
           <img src={logo} alt="Financy" className="h-7" />
         </Link>
 
-        <nav className="flex items-center gap-6">
+        <nav className="flex items-center gap-4 sm:gap-6">
           {navItems.map(({ path, label }) => {
             const active = location.pathname === path
             return (

@@ -33,18 +33,18 @@ export function Categories() {
   function handleClose() { setOpen(false); setEditing(null) }
 
   if (loading) return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-start justify-between">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
           <Skeleton height="h-8" width="w-36" />
           <Skeleton height="h-4" width="w-64" />
         </div>
         <Skeleton height="h-10" width="w-40" radius="rounded-lg" />
       </div>
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[0, 1, 2].map((i) => <Skeleton key={i} height="h-28" radius="rounded-xl" />)}
       </div>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }, (_, i) => (
           <Skeleton key={i} height="h-44" radius="rounded-xl" />
         ))}
@@ -53,21 +53,25 @@ export function Categories() {
   )
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 sm:gap-6">
+
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Categorias</h1>
           <p className="mt-0.5 text-sm text-gray-500">Organize suas transações por categorias</p>
         </div>
-        <button onClick={() => setOpen(true)}
-          className="flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-800 transition-colors">
+        <button
+          onClick={() => setOpen(true)}
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-800 transition-colors sm:w-auto"
+        >
           <Plus className="h-4 w-4" /> Nova categoria
         </button>
       </div>
 
       {/* Cards de resumo */}
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5">
+
         {/* Total de categorias */}
         <div className="rounded-xl border border-gray-200 bg-white p-6">
           <div className="flex items-center gap-3">
@@ -87,12 +91,12 @@ export function Categories() {
         </div>
 
         {/* Categoria mais utilizada */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6">
+        <div className="rounded-xl border border-gray-200 bg-white p-6 sm:col-span-2 lg:col-span-1">
           <div className="flex items-center gap-3">
             {mostUsed
               ? <CategoryIcon icon={mostUsed.icon} color={mostUsed.color} />
               : <div className="h-10 w-10 rounded-lg bg-gray-100" />}
-            <span className="text-2xl font-bold text-gray-900">{mostUsed?.name ?? '—'}</span>
+            <span className="text-2xl font-bold text-gray-900 truncate">{mostUsed?.name ?? '—'}</span>
           </div>
           <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Categoria Mais Utilizada</p>
         </div>
@@ -106,7 +110,7 @@ export function Categories() {
           action={{ label: 'Criar categoria', onClick: () => setOpen(true) }}
         />
       ) : (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {categories.map((c) => {
             const count = transactions.filter((t) => t.categoryId === c.id).length
             return (

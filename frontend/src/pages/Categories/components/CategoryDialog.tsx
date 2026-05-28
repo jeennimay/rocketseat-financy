@@ -96,7 +96,7 @@ export function CategoryDialog({ open, onClose, category }: Props) {
           {/* Ícone */}
           <div className="flex flex-col gap-2">
             <label className={labelCls}>Ícone</label>
-            <div className="grid grid-cols-8 gap-1.5">
+            <div className="grid grid-cols-6 gap-1.5 sm:grid-cols-8">
               {CATEGORY_ICONS.map(({ name: n, Icon }) => (
                 <button
                   key={n}
