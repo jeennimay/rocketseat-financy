@@ -172,9 +172,9 @@ export function Transactions() {
       {/* Tabela */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
         {/* Cabeçalho */}
-        <div className={`grid ${COLS} border-b border-gray-100 px-6 py-3 min-w-[700px]`}>
+        <div className={`grid ${COLS} border-b border-gray-100 py-3 min-w-[700px]`}>
           {['DESCRIÇÃO', 'DATA', 'CATEGORIA', 'TIPO', 'VALOR', 'AÇÕES'].map((h) => (
-            <span key={h} className="text-xs font-semibold uppercase tracking-wide text-gray-400">{h}</span>
+            <span key={h} className="px-6 text-xs font-semibold uppercase tracking-wide text-gray-400">{h}</span>
           ))}
         </div>
 
@@ -182,34 +182,34 @@ export function Transactions() {
           <p className="px-6 py-10 text-sm text-gray-400">Nenhuma transação encontrada.</p>
         ) : (
           paged.map((t) => (
-            <div key={t.id} className={`grid ${COLS} items-center border-b border-gray-100 px-6 py-5 min-w-[700px] hover:bg-gray-50 transition-colors`}>
+            <div key={t.id} className={`grid ${COLS} items-center border-b border-gray-100 py-5 min-w-[700px] hover:bg-gray-50 transition-colors`}>
               {/* Descrição */}
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-center gap-3 min-w-0 px-6">
                 <CategoryIcon icon={t.category?.icon} color={t.category?.color} size="sm" />
                 <span className="truncate text-sm font-medium text-gray-900" title={t.description}>{t.description}</span>
               </div>
               {/* Data */}
-              <span className="text-sm text-gray-500">
+              <span className="px-6 text-sm text-gray-500">
                 {formatDate(t.date, { day: '2-digit', month: '2-digit', year: '2-digit' })}
               </span>
               {/* Categoria */}
-              <div className="flex justify-center">
+              <div className="flex justify-center px-6">
                 {t.category
                   ? <Badge name={t.category.name} color={t.category.color} />
                   : <span className="text-xs text-gray-400">—</span>}
               </div>
               {/* Tipo */}
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 px-6">
                 {t.type === 'income'
                   ? <span className="flex items-center gap-1 text-xs font-medium text-green-600"><CircleArrowUp className="h-3.5 w-3.5" /> Entrada</span>
                   : <span className="flex items-center gap-1 text-xs font-medium text-red-500"><CircleArrowDown className="h-3.5 w-3.5" /> Saída</span>}
               </div>
               {/* Valor */}
-              <div className="text-right text-sm font-semibold tabular-nums text-gray-900 whitespace-nowrap">
+              <div className="px-6 text-right text-sm font-semibold tabular-nums text-gray-900 whitespace-nowrap">
                 {t.type === 'income' ? '+' : '-'} {formatCurrency(t.amount)}
               </div>
               {/* Ações */}
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-end px-6">
                 <ActionButtons
                   onDelete={() => deleteTransaction({ variables: { id: t.id } })}
                   onEdit={() => handleEdit(t)}
