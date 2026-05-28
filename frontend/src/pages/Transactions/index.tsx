@@ -180,7 +180,7 @@ export function Transactions() {
           <span className="text-center text-xs font-semibold uppercase tracking-wide text-gray-400">CATEGORIA</span>
           <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">TIPO</span>
           <span className="text-right text-xs font-semibold uppercase tracking-wide text-gray-400">VALOR</span>
-          <span className="text-right text-xs font-semibold uppercase tracking-wide text-gray-400">AÇÕES</span>
+          <span className="text-center text-xs font-semibold uppercase tracking-wide text-gray-400">AÇÕES</span>
         </div>
 
         {paged.length === 0 ? (
