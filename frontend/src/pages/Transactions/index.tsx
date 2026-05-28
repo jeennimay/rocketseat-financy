@@ -205,9 +205,9 @@ export function Transactions() {
                   : <span className="flex items-center gap-1 text-xs font-medium text-red-500"><CircleArrowDown className="h-3.5 w-3.5" /> Saída</span>}
               </div>
               {/* Valor */}
-              <span className="text-sm font-semibold tabular-nums text-gray-900 justify-self-end">
+              <div className="px-6 text-right text-sm font-semibold tabular-nums text-gray-900">
                 {t.type === 'income' ? '+' : '-'} {formatCurrency(t.amount)}
-              </span>
+              </div>
               {/* Ações */}
               <ActionButtons
                 onDelete={() => deleteTransaction({ variables: { id: t.id } })}
