@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { LIST_TRANSACTIONS } from '@/lib/graphql/queries/transactions'
 import { LIST_CATEGORIES } from '@/lib/graphql/queries/categories'
 import type { Transaction, Category } from '@/types'
-import { Wallet, ArrowUpCircle, ArrowDownCircle, ChevronRight, Plus } from 'lucide-react'
+import { Wallet, ArrowUpCircle, ArrowDownCircle, ChevronRight, Plus, CircleArrowUp, CircleArrowDown } from 'lucide-react'
 import { CategoryIcon } from '@/components/CategoryIcon'
 import { Badge } from '@/components/atoms/Badge'
 import { SummaryCard } from '@/components/molecules/SummaryCard'
@@ -67,9 +67,9 @@ export function Dashboard() {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-3 gap-5">
-        <SummaryCard label="SALDO TOTAL"     value={formatCurrency(balance)} icon={<Wallet className="h-5 w-5 text-blue-500" />}      iconBg="bg-blue-50" />
-        <SummaryCard label="RECEITAS DO MÊS" value={formatCurrency(income)}  icon={<ArrowUpCircle className="h-5 w-5 text-green-600" />} iconBg="bg-green-50" />
-        <SummaryCard label="DESPESAS DO MÊS" value={formatCurrency(expense)} icon={<ArrowDownCircle className="h-5 w-5 text-red-500" />} iconBg="bg-red-50" />
+        <SummaryCard label="SALDO TOTAL"     value={formatCurrency(balance)} icon={<Wallet className="h-5 w-5 text-violet-500" />}       iconBg="bg-violet-50" iconShape="rounded-lg" />
+        <SummaryCard label="RECEITAS DO MÊS" value={formatCurrency(income)}  icon={<ArrowUpCircle className="h-6 w-6 text-green-500" />}  iconBg="" />
+        <SummaryCard label="DESPESAS DO MÊS" value={formatCurrency(expense)} icon={<ArrowDownCircle className="h-6 w-6 text-red-500" />}  iconBg="" />
       </div>
 
       <div className="grid grid-cols-[1fr_360px] gap-5">
@@ -81,7 +81,7 @@ export function Dashboard() {
             </Link>
           </div>
 
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-100">
             {recent.length === 0 ? (
               <p className="px-6 py-8 text-sm text-gray-400">Nenhuma transação ainda.</p>
             ) : (
@@ -138,9 +138,14 @@ function DashboardTxRow({ transaction: t }: { transaction: Transaction }) {
         <span className="text-xs text-gray-400">{formatDate(t.date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
       </div>
       {t.category && <Badge name={t.category.name} color={t.category.color} />}
-      <span className={`text-sm font-semibold tabular-nums ${isIncome ? 'text-green-600' : 'text-red-500'}`}>
-        {isIncome ? '+' : '-'} {formatCurrency(t.amount)}
-      </span>
+      <div className="flex items-center gap-1.5">
+        <span className={`text-sm font-semibold tabular-nums ${isIncome ? 'text-green-600' : 'text-red-500'}`}>
+          {isIncome ? '+' : '-'} {formatCurrency(t.amount)}
+        </span>
+        {isIncome
+          ? <CircleArrowUp className="h-4 w-4 text-green-500" />
+          : <CircleArrowDown className="h-4 w-4 text-red-500" />}
+      </div>
     </div>
   )
 }
