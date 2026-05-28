@@ -2,12 +2,10 @@ import { useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { LIST_TRANSACTIONS } from '@/lib/graphql/queries/transactions'
 import type { Transaction } from '@/types'
-import { Plus, Tag, ArrowLeftRight } from 'lucide-react'
+import { Plus, Tag, ArrowLeftRight, Trash2, Pencil } from 'lucide-react'
 import { CategoryIcon } from '@/components/CategoryIcon'
 import { Badge } from '@/components/atoms/Badge'
-import { SummaryCard } from '@/components/molecules/SummaryCard'
 import { EmptyState } from '@/components/molecules/EmptyState'
-import { ActionButtons } from '@/components/molecules/ActionButtons'
 import { CategoryDialog } from './components/CategoryDialog'
 import { useCategories } from '@/hooks/useCategories'
 import { Skeleton } from '@/components/atoms/Skeleton'
@@ -19,8 +17,8 @@ export function Categories() {
   const [editing, setEditing] = useState<ReturnType<typeof useCategories>['categories'][0] | null>(null)
 
   const { categories, loading, deleteCategory } = useCategories()
-  const { data: txData }               = useQuery<TxData>(LIST_TRANSACTIONS)
-  const transactions                   = txData?.listTransactions ?? []
+  const { data: txData }    = useQuery<TxData>(LIST_TRANSACTIONS)
+  const transactions         = txData?.listTransactions ?? []
 
   const mostUsed = categories.reduce(
     (best, c) => {
@@ -56,6 +54,7 @@ export function Categories() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Categorias</h1>
@@ -69,28 +68,33 @@ export function Categories() {
 
       {/* Cards de resumo */}
       <div className="grid grid-cols-3 gap-5">
-        <SummaryCard
-          label="TOTAL DE CATEGORIAS"
-          value={categories.length}
-          icon={<Tag className="h-5 w-5" />}
-          iconBg=""
-        />
-        <SummaryCard
-          label="TOTAL DE TRANSAÇÕES"
-          value={transactions.length}
-          icon={<ArrowLeftRight className="h-5 w-5" />}
-          iconBg=""
-        />
-        <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-5">
-          {mostUsed ? (
-            <CategoryIcon icon={mostUsed.icon} color={mostUsed.color} />
-          ) : (
-            <div className="h-10 w-10 rounded-full bg-gray-100" />
-          )}
-          <div>
-            <p className="text-2xl font-bold text-gray-900">{mostUsed?.name ?? '—'}</p>
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Categoria Mais Utilizada</p>
+        {/* Total de categorias */}
+        <div className="rounded-xl border border-gray-200 bg-white p-6">
+          <div className="flex items-center gap-3">
+            <Tag className="h-5 w-5 text-gray-400" />
+            <span className="text-3xl font-bold text-gray-900">{categories.length}</span>
           </div>
+          <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Total de Categorias</p>
+        </div>
+
+        {/* Total de transações */}
+        <div className="rounded-xl border border-gray-200 bg-white p-6">
+          <div className="flex items-center gap-3">
+            <ArrowLeftRight className="h-5 w-5 text-violet-500" />
+            <span className="text-3xl font-bold text-gray-900">{transactions.length}</span>
+          </div>
+          <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Total de Transações</p>
+        </div>
+
+        {/* Categoria mais utilizada */}
+        <div className="rounded-xl border border-gray-200 bg-white p-6">
+          <div className="flex items-center gap-3">
+            {mostUsed
+              ? <CategoryIcon icon={mostUsed.icon} color={mostUsed.color} />
+              : <div className="h-10 w-10 rounded-lg bg-gray-100" />}
+            <span className="text-2xl font-bold text-gray-900">{mostUsed?.name ?? '—'}</span>
+          </div>
+          <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Categoria Mais Utilizada</p>
         </div>
       </div>
 
@@ -107,17 +111,36 @@ export function Categories() {
             const count = transactions.filter((t) => t.categoryId === c.id).length
             return (
               <div key={c.id} className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5">
+                {/* Ícone + ações */}
                 <div className="flex items-start justify-between">
                   <CategoryIcon icon={c.icon} color={c.color} />
-                  <ActionButtons
-                    onDelete={() => deleteCategory({ variables: { id: c.id } })}
-                    onEdit={() => handleEdit(c)}
-                  />
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => deleteCategory({ variables: { id: c.id } })}
+                      aria-label="Excluir"
+                      className="rounded-lg border border-gray-200 p-1.5 text-red-400 hover:border-red-200 hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleEdit(c)}
+                      aria-label="Editar"
+                      className="rounded-lg border border-gray-200 p-1.5 text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-colors"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
+
+                {/* Nome + descrição */}
                 <div>
                   <p className="font-semibold text-gray-900">{c.name}</p>
-                  {c.description && <p className="mt-0.5 text-xs text-gray-400 line-clamp-2">{c.description}</p>}
+                  {c.description && (
+                    <p className="mt-0.5 text-xs text-gray-400 line-clamp-2">{c.description}</p>
+                  )}
                 </div>
+
+                {/* Badge + contagem */}
                 <div className="flex items-center justify-between">
                   <Badge name={c.name} color={c.color} />
                   <span className="text-xs text-gray-400">{count} {count === 1 ? 'item' : 'itens'}</span>
