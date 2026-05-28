@@ -1,29 +1,28 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Mail, User, LogOut } from "lucide-react"
-import { useAuthStore } from "@/stores/auth"
-import { toast } from "sonner"
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Mail, User, LogOut } from 'lucide-react'
+import { useAuthStore } from '@/stores/auth'
+import { toast } from 'sonner'
+import { Button } from '@/components/atoms/Button'
+import { FormField } from '@/components/molecules/FormField'
 
 export function Profile() {
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
-  const [name, setName] = useState(user?.name ?? "")
+  const [name, setName] = useState(user?.name ?? '')
 
   const initials = user?.name
-    ?.split(" ")
+    ?.split(' ')
     .map((n) => n[0])
     .slice(0, 2)
-    .join("")
-    .toUpperCase() ?? "?"
+    .join('')
+    .toUpperCase() ?? '?'
 
-  function handleLogout() {
-    logout()
-    navigate("/login")
-  }
+  function handleLogout() { logout(); navigate('/login') }
 
   function handleSave(e: React.FormEvent) {
     e.preventDefault()
-    toast.success("Alterações salvas")
+    toast.success('Alterações salvas')
   }
 
   return (
@@ -40,35 +39,33 @@ export function Profile() {
         <hr className="mb-6 border-gray-200" />
 
         <form onSubmit={handleSave} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Nome completo</label>
-            <div className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2.5 focus-within:border-green-600">
-              <User className="h-4 w-4 flex-shrink-0 text-gray-400" />
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-                className="w-full bg-transparent text-sm text-gray-900 outline-none" />
-            </div>
-          </div>
+          <FormField label="Nome completo" prefixIcon={<User className="h-4 w-4" />}>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full bg-transparent text-sm text-gray-900 outline-none"
+            />
+          </FormField>
 
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-gray-700">E-mail</label>
             <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
               <Mail className="h-4 w-4 flex-shrink-0 text-gray-400" />
-              <input type="email" value={user?.email ?? ""} disabled
+              <input type="email" value={user?.email ?? ''} disabled
                 className="w-full bg-transparent text-sm text-gray-500 outline-none" />
             </div>
             <p className="text-xs text-gray-400">O e-mail não pode ser alterado</p>
           </div>
 
-          <button type="submit"
-            className="w-full rounded-lg bg-green-700 py-3 text-sm font-semibold text-white hover:bg-green-800 transition-colors">
+          <Button type="submit" className="w-full py-3">
             Salvar alterações
-          </button>
+          </Button>
         </form>
 
-        <button onClick={handleLogout}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-3 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
+        <Button variant="outline" onClick={handleLogout} className="mt-3 w-full py-3 text-red-500 hover:bg-red-50 border-gray-300">
           <LogOut className="h-4 w-4" /> Sair da conta
-        </button>
+        </Button>
       </div>
     </div>
   )

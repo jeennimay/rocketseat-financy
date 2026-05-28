@@ -1,59 +1,58 @@
-import { useState } from "react"
-import { useQuery } from "@apollo/client/react"
-import { Link } from "react-router-dom"
-import { LIST_TRANSACTIONS } from "@/lib/graphql/queries/transactions"
-import { LIST_CATEGORIES } from "@/lib/graphql/queries/categories"
-import type { Transaction, Category } from "@/types"
-import { Wallet, ArrowUpCircle, ArrowDownCircle, ChevronRight, Plus } from "lucide-react"
-import { CategoryIcon, CategoryTag } from "@/components/CategoryIcon"
-import { TransactionDialog } from "../Transactions/components/TransactionDialog"
+import { useState } from 'react'
+import { useQuery } from '@apollo/client/react'
+import { Link } from 'react-router-dom'
+import { LIST_TRANSACTIONS } from '@/lib/graphql/queries/transactions'
+import { LIST_CATEGORIES } from '@/lib/graphql/queries/categories'
+import type { Transaction, Category } from '@/types'
+import { Wallet, ArrowUpCircle, ArrowDownCircle, ChevronRight, Plus } from 'lucide-react'
+import { CategoryIcon } from '@/components/CategoryIcon'
+import { Badge } from '@/components/atoms/Badge'
+import { SummaryCard } from '@/components/molecules/SummaryCard'
+import { TransactionDialog } from '../Transactions/components/TransactionDialog'
+import { formatCurrency, formatDate } from '@/utils/format'
 
-type TxData = { listTransactions: Transaction[] }
+type TxData  = { listTransactions: Transaction[] }
 type CatData = { listCategories: Category[] }
-
-function fmt(v: number) {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v)
-}
 
 export function Dashboard() {
   const [openModal, setOpenModal] = useState(false)
-  const { data: txData } = useQuery<TxData>(LIST_TRANSACTIONS)
+  const { data: txData }  = useQuery<TxData>(LIST_TRANSACTIONS)
   const { data: catData } = useQuery<CatData>(LIST_CATEGORIES)
 
   const transactions = txData?.listTransactions ?? []
-  const categories = catData?.listCategories ?? []
+  const categories   = catData?.listCategories ?? []
 
-  const now = new Date()
+  const now       = new Date()
   const thisMonth = transactions.filter((t) => {
     const d = new Date(t.date)
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
   })
 
-  const income = thisMonth.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0)
-  const expense = thisMonth.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0)
+  const income  = thisMonth.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0)
+  const expense = thisMonth.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
   const balance = income - expense
 
   const recent = [...transactions]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5)
 
-  const catTotals = categories.map((c) => {
-    const txs = transactions.filter((t) => t.categoryId === c.id && t.type === "expense")
-    return { ...c, count: txs.length, total: txs.reduce((s, t) => s + t.amount, 0) }
-  }).filter((c) => c.count > 0).slice(0, 5)
+  const catTotals = categories
+    .map((c) => {
+      const txs = transactions.filter((t) => t.categoryId === c.id && t.type === 'expense')
+      return { ...c, count: txs.length, total: txs.reduce((s, t) => s + t.amount, 0) }
+    })
+    .filter((c) => c.count > 0)
+    .slice(0, 5)
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Cards */}
       <div className="grid grid-cols-3 gap-5">
-        <SummaryCard label="SALDO TOTAL" value={balance} icon={<Wallet className="h-5 w-5 text-blue-500" />} iconBg="bg-blue-50" />
-        <SummaryCard label="RECEITAS DO MÊS" value={income} icon={<ArrowUpCircle className="h-5 w-5 text-green-600" />} iconBg="bg-green-50" />
-        <SummaryCard label="DESPESAS DO MÊS" value={expense} icon={<ArrowDownCircle className="h-5 w-5 text-red-500" />} iconBg="bg-red-50" />
+        <SummaryCard label="SALDO TOTAL"     value={formatCurrency(balance)} icon={<Wallet className="h-5 w-5 text-blue-500" />}      iconBg="bg-blue-50" />
+        <SummaryCard label="RECEITAS DO MÊS" value={formatCurrency(income)}  icon={<ArrowUpCircle className="h-5 w-5 text-green-600" />} iconBg="bg-green-50" />
+        <SummaryCard label="DESPESAS DO MÊS" value={formatCurrency(expense)} icon={<ArrowDownCircle className="h-5 w-5 text-red-500" />} iconBg="bg-red-50" />
       </div>
 
-      {/* Content */}
       <div className="grid grid-cols-[1fr_360px] gap-5">
-        {/* Transactions */}
         <div className="rounded-xl border border-gray-200 bg-white">
           <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
             <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Transações recentes</span>
@@ -78,7 +77,6 @@ export function Dashboard() {
           </button>
         </div>
 
-        {/* Categories */}
         <div className="rounded-xl border border-gray-200 bg-white">
           <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
             <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Categorias</span>
@@ -93,10 +91,10 @@ export function Dashboard() {
             ) : (
               catTotals.map((c) => (
                 <div key={c.id} className="flex items-center justify-between px-6 py-3">
-                  <CategoryTag name={c.name} color={c.color} />
+                  <Badge name={c.name} color={c.color} />
                   <div className="flex flex-col items-end gap-0.5">
-                    <span className="text-xs text-gray-400">{c.count} {c.count === 1 ? "item" : "itens"}</span>
-                    <span className="text-sm font-semibold text-gray-800">{fmt(c.total)}</span>
+                    <span className="text-xs text-gray-400">{c.count} {c.count === 1 ? 'item' : 'itens'}</span>
+                    <span className="text-sm font-semibold text-gray-800">{formatCurrency(c.total)}</span>
                   </div>
                 </div>
               ))
@@ -110,32 +108,19 @@ export function Dashboard() {
   )
 }
 
-function SummaryCard({ label, value, icon, iconBg }: { label: string; value: number; icon: React.ReactNode; iconBg: string }) {
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6">
-      <div className="flex items-center gap-3">
-        <div className={`flex h-9 w-9 items-center justify-center rounded-full ${iconBg}`}>{icon}</div>
-        <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</span>
-      </div>
-      <p className="mt-4 text-3xl font-bold text-gray-900">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value)}</p>
-    </div>
-  )
-}
-
 function DashboardTxRow({ transaction: t }: { transaction: Transaction }) {
-  const isIncome = t.type === "income"
+  const isIncome = t.type === 'income'
   return (
     <div className="flex items-center gap-4 px-6 py-3.5">
       <CategoryIcon icon={t.category?.icon} color={t.category?.color} size="sm" />
       <div className="flex flex-1 flex-col">
         <span className="text-sm font-medium text-gray-900">{t.description}</span>
-        <span className="text-xs text-gray-400">{new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(new Date(t.date))}</span>
+        <span className="text-xs text-gray-400">{formatDate(t.date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
       </div>
-      {t.category && <CategoryTag name={t.category.name} color={t.category.color} />}
-      <span className={`text-sm font-semibold tabular-nums ${isIncome ? "text-green-600" : "text-red-500"}`}>
-        {isIncome ? "+" : "-"} {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(t.amount)}
+      {t.category && <Badge name={t.category.name} color={t.category.color} />}
+      <span className={`text-sm font-semibold tabular-nums ${isIncome ? 'text-green-600' : 'text-red-500'}`}>
+        {isIncome ? '+' : '-'} {formatCurrency(t.amount)}
       </span>
     </div>
   )
 }
-

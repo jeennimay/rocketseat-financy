@@ -1,75 +1,65 @@
-import { useState, useMemo } from "react"
-import { useQuery, useMutation } from "@apollo/client/react"
-import { LIST_TRANSACTIONS } from "@/lib/graphql/queries/transactions"
-import { LIST_CATEGORIES } from "@/lib/graphql/queries/categories"
-import { DELETE_TRANSACTION } from "@/lib/graphql/mutations/transaction"
-import type { Transaction, Category } from "@/types"
-import { Plus, Search, Trash2, Pencil, ChevronLeft, ChevronRight, CircleArrowDown, CircleArrowUp } from "lucide-react"
-import { CategoryIcon, CategoryTag } from "@/components/CategoryIcon"
-import { TransactionDialog } from "./components/TransactionDialog"
-import { toast } from "sonner"
+import { useState, useMemo } from 'react'
+import { useQuery } from '@apollo/client/react'
+import { LIST_CATEGORIES } from '@/lib/graphql/queries/categories'
+import type { Transaction, Category } from '@/types'
+import { Plus, Search, ChevronLeft, ChevronRight, CircleArrowDown, CircleArrowUp } from 'lucide-react'
+import { CategoryIcon } from '@/components/CategoryIcon'
+import { Badge } from '@/components/atoms/Badge'
+import { ActionButtons } from '@/components/molecules/ActionButtons'
+import { TransactionDialog } from './components/TransactionDialog'
+import { useTransactions } from '@/hooks/useTransactions'
+import { usePagination } from '@/hooks/usePagination'
+import { formatCurrency, formatDate } from '@/utils/format'
 
-type TxData = { listTransactions: Transaction[] }
 type CatData = { listCategories: Category[] }
 
 const PAGE_SIZE = 10
 
 function buildPeriodOptions(transactions: Transaction[]) {
   const seen = new Set<string>()
-  const options: { value: string; label: string }[] = []
+  const opts: { value: string; label: string }[] = []
   const sorted = [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   for (const t of sorted) {
-    const d = new Date(t.date)
-    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+    const d     = new Date(t.date)
+    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
     if (!seen.has(value)) {
       seen.add(value)
-      const label = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric" }).format(d)
-      options.push({ value, label: label.charAt(0).toUpperCase() + label.slice(1) })
+      const label = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(d)
+      opts.push({ value, label: label.charAt(0).toUpperCase() + label.slice(1) })
     }
   }
-  return options
+  return opts
 }
 
 export function Transactions() {
-  const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<Transaction | null>(null)
-  const [search, setSearch] = useState("")
-  const [typeFilter, setTypeFilter] = useState("all")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [periodFilter, setPeriodFilter] = useState("all")
-  const [page, setPage] = useState(1)
+  const [open, setOpen]               = useState(false)
+  const [editing, setEditing]         = useState<Transaction | null>(null)
+  const [search, setSearch]           = useState('')
+  const [typeFilter, setTypeFilter]   = useState('all')
+  const [categoryFilter, setCategoryFilter] = useState('all')
+  const [periodFilter, setPeriodFilter]     = useState('all')
 
-  const { data: txData } = useQuery<TxData>(LIST_TRANSACTIONS)
+  const { transactions, deleteTransaction } = useTransactions()
   const { data: catData } = useQuery<CatData>(LIST_CATEGORIES)
-  const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
-    refetchQueries: [{ query: LIST_TRANSACTIONS }],
-    onCompleted: () => toast.success("Transação excluída"),
-    onError: () => toast.error("Erro ao excluir"),
-  })
-
   const categories = catData?.listCategories ?? []
-  const all = [...(txData?.listTransactions ?? [])].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  )
 
-  const periodOptions = useMemo(() => buildPeriodOptions(all), [all])
+  const periodOptions = useMemo(() => buildPeriodOptions(transactions), [transactions])
 
   const filtered = useMemo(() => {
-    return all.filter((t) => {
-      const matchSearch = t.description.toLowerCase().includes(search.toLowerCase())
-      const matchType = typeFilter === "all" || t.type === typeFilter
-      const matchCat = categoryFilter === "all" || t.categoryId === categoryFilter
-      const matchPeriod = periodFilter === "all" || (() => {
-        const d = new Date(t.date)
-        const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+    return transactions.filter((t) => {
+      const matchSearch  = t.description.toLowerCase().includes(search.toLowerCase())
+      const matchType    = typeFilter === 'all' || t.type === typeFilter
+      const matchCat     = categoryFilter === 'all' || t.categoryId === categoryFilter
+      const matchPeriod  = periodFilter === 'all' || (() => {
+        const d     = new Date(t.date)
+        const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
         return value === periodFilter
       })()
       return matchSearch && matchType && matchCat && matchPeriod
     })
-  }, [all, search, typeFilter, categoryFilter, periodFilter])
+  }, [transactions, search, typeFilter, categoryFilter, periodFilter])
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const { page, setPage, totalPages, paged, next, prev } = usePagination(filtered, PAGE_SIZE)
 
   function handleEdit(t: Transaction) { setEditing(t); setOpen(true) }
   function handleClose() { setOpen(false); setEditing(null) }
@@ -89,7 +79,7 @@ export function Transactions() {
         </button>
       </div>
 
-      {/* Filters */}
+      {/* Filtros */}
       <div className="rounded-xl border border-gray-200 bg-white px-5 py-4">
         <div className="grid grid-cols-4 gap-4">
           <div>
@@ -133,10 +123,10 @@ export function Transactions() {
         </div>
       </div>
 
-      {/* Table */}
+      {/* Tabela */}
       <div className="rounded-xl border border-gray-200 bg-white">
         <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_80px] border-b border-gray-100 px-6 py-3">
-          {["DESCRIÇÃO", "DATA", "CATEGORIA", "TIPO", "VALOR", "AÇÕES"].map((h) => (
+          {['DESCRIÇÃO', 'DATA', 'CATEGORIA', 'TIPO', 'VALOR', 'AÇÕES'].map((h) => (
             <span key={h} className="text-xs font-semibold uppercase tracking-wide text-gray-400">{h}</span>
           ))}
         </div>
@@ -151,48 +141,42 @@ export function Transactions() {
                 <span className="text-sm font-medium text-gray-900">{t.description}</span>
               </div>
               <span className="text-sm text-gray-500">
-                {new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(new Date(t.date))}
+                {formatDate(t.date, { day: '2-digit', month: '2-digit', year: '2-digit' })}
               </span>
-              <div>{t.category ? <CategoryTag name={t.category.name} color={t.category.color} /> : <span className="text-xs text-gray-400">—</span>}</div>
+              <div>{t.category ? <Badge name={t.category.name} color={t.category.color} /> : <span className="text-xs text-gray-400">—</span>}</div>
               <div className="flex items-center gap-1.5">
-                {t.type === "income"
+                {t.type === 'income'
                   ? <span className="flex items-center gap-1 text-xs font-medium text-green-600"><CircleArrowUp className="h-3.5 w-3.5" /> Entrada</span>
                   : <span className="flex items-center gap-1 text-xs font-medium text-red-500"><CircleArrowDown className="h-3.5 w-3.5" /> Saída</span>}
               </div>
-              <span className={`text-sm font-semibold tabular-nums ${t.type === "income" ? "text-green-600" : "text-red-500"}`}>
-                {t.type === "income" ? "+" : "-"} {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(t.amount)}
+              <span className={`text-sm font-semibold tabular-nums ${t.type === 'income' ? 'text-green-600' : 'text-red-500'}`}>
+                {t.type === 'income' ? '+' : '-'} {formatCurrency(t.amount)}
               </span>
-              <div className="flex items-center gap-1">
-                <button onClick={() => deleteTransaction({ variables: { id: t.id } })}
-                  className="rounded-lg border border-gray-200 p-1.5 text-gray-400 hover:border-red-200 hover:text-red-500 transition-colors">
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-                <button onClick={() => handleEdit(t)}
-                  className="rounded-lg border border-gray-200 p-1.5 text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-colors">
-                  <Pencil className="h-3.5 w-3.5" />
-                </button>
-              </div>
+              <ActionButtons
+                onDelete={() => deleteTransaction({ variables: { id: t.id } })}
+                onEdit={() => handleEdit(t)}
+              />
             </div>
           ))
         )}
 
-        {/* Pagination */}
+        {/* Paginação */}
         <div className="flex items-center justify-between px-6 py-3">
           <span className="text-xs text-gray-400">
-            {filtered.length === 0 ? "0 resultados" : `${(page - 1) * PAGE_SIZE + 1} a ${Math.min(page * PAGE_SIZE, filtered.length)} | ${filtered.length} resultados`}
+            {filtered.length === 0 ? '0 resultados' : `${(page - 1) * PAGE_SIZE + 1} a ${Math.min(page * PAGE_SIZE, filtered.length)} | ${filtered.length} resultados`}
           </span>
           <div className="flex items-center gap-1">
-            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
+            <button onClick={prev} disabled={page === 1}
               className="rounded-lg border border-gray-200 p-1.5 disabled:opacity-40 hover:bg-gray-50">
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
             {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((n) => (
               <button key={n} onClick={() => setPage(n)}
-                className={`h-7 w-7 rounded-lg text-xs font-medium transition-colors ${n === page ? "bg-green-700 text-white" : "border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
+                className={`h-7 w-7 rounded-lg text-xs font-medium transition-colors ${n === page ? 'bg-green-700 text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
                 {n}
               </button>
             ))}
-            <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+            <button onClick={next} disabled={page === totalPages}
               className="rounded-lg border border-gray-200 p-1.5 disabled:opacity-40 hover:bg-gray-50">
               <ChevronRight className="h-3.5 w-3.5" />
             </button>

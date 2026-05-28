@@ -1,30 +1,29 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import { Mail, Lock, Eye, EyeOff, User, LogIn } from "lucide-react"
-import { useAuthStore } from "@/stores/auth"
-import { toast } from "sonner"
-import logo from "@/assets/logo.svg"
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { Mail, Lock, Eye, EyeOff, User, LogIn } from 'lucide-react'
+import { useAuthStore } from '@/stores/auth'
+import { toast } from 'sonner'
+import logo from '@/assets/logo.svg'
+import { Button } from '@/components/atoms/Button'
+import { FormField } from '@/components/molecules/FormField'
 
 export function Signup() {
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [name, setName]               = useState('')
+  const [email, setEmail]             = useState('')
+  const [password, setPassword]       = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading]         = useState(false)
   const signup = useAuthStore((s) => s.signup)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (password.length < 8) {
-      toast.error("A senha deve ter no mínimo 8 caracteres")
-      return
-    }
+    if (password.length < 8) { toast.error('A senha deve ter no mínimo 8 caracteres'); return }
     setLoading(true)
     try {
       await signup({ name, email, password })
-      toast.success("Conta criada com sucesso!")
+      toast.success('Conta criada com sucesso!')
     } catch {
-      toast.error("Erro ao criar conta")
+      toast.error('Erro ao criar conta')
     } finally {
       setLoading(false)
     }
@@ -41,62 +40,46 @@ export function Signup() {
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Nome completo</label>
-            <div className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2.5 focus-within:border-green-600 focus-within:ring-1 focus-within:ring-green-600">
-              <User className="h-4 w-4 flex-shrink-0 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Seu nome completo"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
-              />
-            </div>
-          </div>
+          <FormField label="Nome completo" prefixIcon={<User className="h-4 w-4" />}>
+            <input
+              type="text"
+              placeholder="Seu nome completo"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+            />
+          </FormField>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">E-mail</label>
-            <div className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2.5 focus-within:border-green-600 focus-within:ring-1 focus-within:ring-green-600">
-              <Mail className="h-4 w-4 flex-shrink-0 text-gray-400" />
-              <input
-                type="email"
-                placeholder="mail@exemplo.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
-              />
-            </div>
-          </div>
+          <FormField label="E-mail" prefixIcon={<Mail className="h-4 w-4" />}>
+            <input
+              type="email"
+              placeholder="mail@exemplo.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+            />
+          </FormField>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Senha</label>
-            <div className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2.5 focus-within:border-green-600 focus-within:ring-1 focus-within:ring-green-600">
-              <Lock className="h-4 w-4 flex-shrink-0 text-gray-400" />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Digite sua senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
-              />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-gray-400 hover:text-gray-600">
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-            <p className="text-xs text-gray-400">A senha deve ter no mínimo 8 caracteres</p>
-          </div>
+          <FormField label="Senha" prefixIcon={<Lock className="h-4 w-4" />}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Digite sua senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+            />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-gray-400 hover:text-gray-600">
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </FormField>
+          <p className="text-xs text-gray-400">A senha deve ter no mínimo 8 caracteres</p>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-2 w-full rounded-lg bg-green-700 py-3 text-sm font-semibold text-white transition-colors hover:bg-green-800 disabled:opacity-60"
-          >
-            {loading ? "Criando..." : "Cadastrar"}
-          </button>
+          <Button type="submit" loading={loading} className="mt-2 w-full py-3">
+            Cadastrar
+          </Button>
         </form>
 
         <div className="my-6 flex items-center gap-3">
@@ -106,12 +89,11 @@ export function Signup() {
         </div>
 
         <p className="mb-3 text-center text-sm text-gray-500">Já tem uma conta?</p>
-        <Link
-          to="/login"
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-        >
-          <LogIn className="h-4 w-4" />
-          Fazer login
+        <Link to="/login">
+          <Button variant="outline" className="w-full py-3">
+            <LogIn className="h-4 w-4" />
+            Fazer login
+          </Button>
         </Link>
       </div>
     </div>
