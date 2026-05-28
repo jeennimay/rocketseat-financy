@@ -10,6 +10,7 @@ import { EmptyState } from '@/components/molecules/EmptyState'
 import { ActionButtons } from '@/components/molecules/ActionButtons'
 import { CategoryDialog } from './components/CategoryDialog'
 import { useCategories } from '@/hooks/useCategories'
+import { Skeleton } from '@/components/atoms/Skeleton'
 
 type TxData = { listTransactions: Transaction[] }
 
@@ -17,7 +18,7 @@ export function Categories() {
   const [open, setOpen]       = useState(false)
   const [editing, setEditing] = useState<ReturnType<typeof useCategories>['categories'][0] | null>(null)
 
-  const { categories, deleteCategory } = useCategories()
+  const { categories, loading, deleteCategory } = useCategories()
   const { data: txData }               = useQuery<TxData>(LIST_TRANSACTIONS)
   const transactions                   = txData?.listTransactions ?? []
 
@@ -32,6 +33,26 @@ export function Categories() {
 
   function handleEdit(c: (typeof categories)[0]) { setEditing(c); setOpen(true) }
   function handleClose() { setOpen(false); setEditing(null) }
+
+  if (loading) return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-2">
+          <Skeleton height="h-8" width="w-36" />
+          <Skeleton height="h-4" width="w-64" />
+        </div>
+        <Skeleton height="h-10" width="w-40" radius="rounded-lg" />
+      </div>
+      <div className="grid grid-cols-3 gap-5">
+        {[0, 1, 2].map((i) => <Skeleton key={i} height="h-28" radius="rounded-xl" />)}
+      </div>
+      <div className="grid grid-cols-4 gap-4">
+        {Array.from({ length: 8 }, (_, i) => (
+          <Skeleton key={i} height="h-44" radius="rounded-xl" />
+        ))}
+      </div>
+    </div>
+  )
 
   return (
     <div className="flex flex-col gap-6">

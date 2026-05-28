@@ -8,6 +8,7 @@ import { Wallet, ArrowUpCircle, ArrowDownCircle, ChevronRight, Plus } from 'luci
 import { CategoryIcon } from '@/components/CategoryIcon'
 import { Badge } from '@/components/atoms/Badge'
 import { SummaryCard } from '@/components/molecules/SummaryCard'
+import { Skeleton } from '@/components/atoms/Skeleton'
 import { TransactionDialog } from '../Transactions/components/TransactionDialog'
 import { formatCurrency, formatDate } from '@/utils/format'
 
@@ -16,8 +17,9 @@ type CatData = { listCategories: Category[] }
 
 export function Dashboard() {
   const [openModal, setOpenModal] = useState(false)
-  const { data: txData }  = useQuery<TxData>(LIST_TRANSACTIONS)
-  const { data: catData } = useQuery<CatData>(LIST_CATEGORIES)
+  const { data: txData,  loading: txLoading }  = useQuery<TxData>(LIST_TRANSACTIONS)
+  const { data: catData, loading: catLoading } = useQuery<CatData>(LIST_CATEGORIES)
+  const loading = txLoading || catLoading
 
   const transactions = txData?.listTransactions ?? []
   const categories   = catData?.listCategories ?? []
@@ -43,6 +45,24 @@ export function Dashboard() {
     })
     .filter((c) => c.count > 0)
     .slice(0, 5)
+
+  if (loading) return (
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-3 gap-5">
+        {[0, 1, 2].map((i) => <Skeleton key={i} height="h-32" radius="rounded-xl" />)}
+      </div>
+      <div className="grid grid-cols-[1fr_360px] gap-5">
+        <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-6">
+          <Skeleton height="h-5" width="w-48" />
+          <Skeleton lines={5} height="h-14" gap="gap-3" radius="rounded-lg" />
+        </div>
+        <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-6">
+          <Skeleton height="h-5" width="w-32" />
+          <Skeleton lines={5} height="h-8" gap="gap-3" radius="rounded-lg" />
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <div className="flex flex-col gap-6">

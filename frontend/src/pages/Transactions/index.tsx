@@ -10,6 +10,7 @@ import { TransactionDialog } from './components/TransactionDialog'
 import { useTransactions } from '@/hooks/useTransactions'
 import { usePagination } from '@/hooks/usePagination'
 import { formatCurrency, formatDate } from '@/utils/format'
+import { Skeleton } from '@/components/atoms/Skeleton'
 
 type CatData = { listCategories: Category[] }
 
@@ -39,7 +40,7 @@ export function Transactions() {
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [periodFilter, setPeriodFilter]     = useState('all')
 
-  const { transactions, deleteTransaction } = useTransactions()
+  const { transactions, loading, deleteTransaction } = useTransactions()
   const { data: catData } = useQuery<CatData>(LIST_CATEGORIES)
   const categories = catData?.listCategories ?? []
 
@@ -63,6 +64,29 @@ export function Transactions() {
 
   function handleEdit(t: Transaction) { setEditing(t); setOpen(true) }
   function handleClose() { setOpen(false); setEditing(null) }
+
+  if (loading) return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-2">
+          <Skeleton height="h-8" width="w-40" />
+          <Skeleton height="h-4" width="w-72" />
+        </div>
+        <Skeleton height="h-10" width="w-40" radius="rounded-lg" />
+      </div>
+      <div className="rounded-xl border border-gray-200 bg-white px-5 py-4">
+        <div className="grid grid-cols-4 gap-4">
+          {[0, 1, 2, 3].map((i) => <Skeleton key={i} height="h-10" radius="rounded-lg" />)}
+        </div>
+      </div>
+      <div className="rounded-xl border border-gray-200 bg-white p-6 flex flex-col gap-3">
+        <Skeleton height="h-8" radius="rounded-lg" />
+        {Array.from({ length: PAGE_SIZE }, (_, i) => (
+          <Skeleton key={i} height="h-12" radius="rounded-lg" />
+        ))}
+      </div>
+    </div>
+  )
 
   return (
     <div className="flex flex-col gap-6">
