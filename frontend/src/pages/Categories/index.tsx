@@ -118,7 +118,7 @@ export function Categories() {
                     <button
                       onClick={() => deleteCategory({ variables: { id: c.id } })}
                       aria-label="Excluir"
-                      className="rounded-lg border border-gray-200 p-1.5 text-red-400 hover:border-red-200 hover:bg-red-50 transition-colors"
+                      className="rounded-lg border border-gray-200 p-1.5 text-gray-400 hover:border-red-200 hover:text-red-500 transition-colors"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
