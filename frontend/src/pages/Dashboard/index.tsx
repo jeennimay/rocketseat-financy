@@ -110,12 +110,10 @@ export function Dashboard() {
               <p className="px-6 py-8 text-sm text-gray-400">Nenhuma categoria com transações.</p>
             ) : (
               catTotals.map((c) => (
-                <div key={c.id} className="flex items-center justify-between px-6 py-3">
-                  <Badge name={c.name} color={c.color} />
-                  <div className="flex flex-col items-end gap-0.5">
-                    <span className="text-xs text-gray-400">{c.count} {c.count === 1 ? 'item' : 'itens'}</span>
-                    <span className="text-sm font-semibold text-gray-800">{formatCurrency(c.total)}</span>
-                  </div>
+                <div key={c.id} className="grid grid-cols-[1fr_auto_auto] items-center gap-4 px-6 py-3">
+                  <div><Badge name={c.name} color={c.color} /></div>
+                  <span className="text-xs text-gray-400">{c.count} {c.count === 1 ? 'item' : 'itens'}</span>
+                  <span className="text-sm font-semibold text-gray-800 w-24 text-right">{formatCurrency(c.total)}</span>
                 </div>
               ))
             )}
@@ -137,7 +135,7 @@ function DashboardTxRow({ transaction: t }: { transaction: Transaction }) {
         <span className="truncate text-sm font-medium text-gray-900">{t.description}</span>
         <span className="text-xs text-gray-400">{formatDate(t.date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
       </div>
-      <div className="flex justify-start">
+      <div className="flex justify-center">
         {t.category && <Badge name={t.category.name} color={t.category.color} />}
       </div>
       <div className="flex items-center gap-1.5 justify-end">
