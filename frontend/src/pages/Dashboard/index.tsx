@@ -131,14 +131,16 @@ export function Dashboard() {
 function DashboardTxRow({ transaction: t }: { transaction: Transaction }) {
   const isIncome = t.type === 'income'
   return (
-    <div className="flex items-center gap-4 px-6 py-3.5">
+    <div className="grid grid-cols-[auto_1fr_120px_auto] items-center gap-4 px-6 py-3.5">
       <CategoryIcon icon={t.category?.icon} color={t.category?.color} size="sm" />
-      <div className="flex flex-1 flex-col">
-        <span className="text-sm font-medium text-gray-900">{t.description}</span>
+      <div className="flex flex-col min-w-0">
+        <span className="truncate text-sm font-medium text-gray-900">{t.description}</span>
         <span className="text-xs text-gray-400">{formatDate(t.date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
       </div>
-      {t.category && <Badge name={t.category.name} color={t.category.color} />}
-      <div className="flex items-center gap-1.5">
+      <div className="flex justify-start">
+        {t.category && <Badge name={t.category.name} color={t.category.color} />}
+      </div>
+      <div className="flex items-center gap-1.5 justify-end">
         <span className={`text-sm font-semibold tabular-nums ${isIncome ? 'text-green-600' : 'text-red-500'}`}>
           {isIncome ? '+' : '-'} {formatCurrency(t.amount)}
         </span>
