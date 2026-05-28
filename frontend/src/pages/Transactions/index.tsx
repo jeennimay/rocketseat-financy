@@ -106,7 +106,9 @@ export function Transactions() {
     </div>
   )
 
-  const COLS = 'grid-cols-[minmax(0,2fr)_minmax(70px,1fr)_minmax(100px,1.5fr)_minmax(80px,1fr)_minmax(100px,1.5fr)_64px]'
+  // Colunas: descrição fluida | data | categoria | tipo | valor | ações (fixas com mínimos)
+  const COLS = 'grid-cols-[minmax(0,1fr)_80px_120px_100px_120px_76px]'
+  const ROW  = `grid ${COLS} gap-x-2 items-center px-6 min-w-[700px]`
 
   return (
     <div className="flex flex-col gap-6">
@@ -172,44 +174,49 @@ export function Transactions() {
       {/* Tabela */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
         {/* Cabeçalho */}
-        <div className={`grid ${COLS} border-b border-gray-100 py-3 min-w-[700px]`}>
-          {['DESCRIÇÃO', 'DATA', 'CATEGORIA', 'TIPO', 'VALOR', 'AÇÕES'].map((h) => (
-            <span key={h} className="px-6 text-xs font-semibold uppercase tracking-wide text-gray-400">{h}</span>
-          ))}
+        <div className={`${ROW} border-b border-gray-100 py-3`}>
+          <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">DESCRIÇÃO</span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">DATA</span>
+          <span className="text-center text-xs font-semibold uppercase tracking-wide text-gray-400">CATEGORIA</span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">TIPO</span>
+          <span className="text-right text-xs font-semibold uppercase tracking-wide text-gray-400">VALOR</span>
+          <span className="text-right text-xs font-semibold uppercase tracking-wide text-gray-400">AÇÕES</span>
         </div>
 
         {paged.length === 0 ? (
           <p className="px-6 py-10 text-sm text-gray-400">Nenhuma transação encontrada.</p>
         ) : (
           paged.map((t) => (
-            <div key={t.id} className={`grid ${COLS} items-center border-b border-gray-100 py-5 min-w-[700px] hover:bg-gray-50 transition-colors`}>
-              {/* Descrição */}
-              <div className="flex items-center gap-3 min-w-0 px-6">
+            <div key={t.id} className={`${ROW} border-b border-gray-100 py-5 hover:bg-gray-50 transition-colors`}>
+              {/* Descrição — fluida com ellipsis */}
+              <div className="flex items-center gap-3 min-w-0">
                 <CategoryIcon icon={t.category?.icon} color={t.category?.color} size="sm" />
-                <span className="truncate text-sm font-medium text-gray-900" title={t.description}>{t.description}</span>
+                <span className="truncate text-sm font-medium text-gray-900" title={t.description}>
+                  {t.description}
+                </span>
               </div>
               {/* Data */}
-              <span className="px-6 text-sm text-gray-500">
+              <span className="text-sm text-gray-500 whitespace-nowrap">
                 {formatDate(t.date, { day: '2-digit', month: '2-digit', year: '2-digit' })}
               </span>
               {/* Categoria */}
-              <div className="flex justify-center px-6">
+              <div className="flex justify-center">
                 {t.category
                   ? <Badge name={t.category.name} color={t.category.color} />
                   : <span className="text-xs text-gray-400">—</span>}
               </div>
               {/* Tipo */}
-              <div className="flex items-center gap-1.5 px-6">
+              <div className="flex items-center gap-1.5">
                 {t.type === 'income'
                   ? <span className="flex items-center gap-1 text-xs font-medium text-green-600"><CircleArrowUp className="h-3.5 w-3.5" /> Entrada</span>
                   : <span className="flex items-center gap-1 text-xs font-medium text-red-500"><CircleArrowDown className="h-3.5 w-3.5" /> Saída</span>}
               </div>
               {/* Valor */}
-              <div className="px-6 text-right text-sm font-semibold tabular-nums text-gray-900 whitespace-nowrap">
+              <div className="text-right text-sm font-semibold tabular-nums text-gray-900 whitespace-nowrap">
                 {t.type === 'income' ? '+' : '-'} {formatCurrency(t.amount)}
               </div>
               {/* Ações */}
-              <div className="flex items-center justify-end px-6">
+              <div className="flex items-center justify-end">
                 <ActionButtons
                   onDelete={() => deleteTransaction({ variables: { id: t.id } })}
                   onEdit={() => handleEdit(t)}
