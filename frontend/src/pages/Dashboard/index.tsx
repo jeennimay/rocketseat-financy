@@ -47,11 +47,11 @@ export function Dashboard() {
     .slice(0, 5)
 
   if (loading) return (
-    <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-3 gap-5">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
         {[0, 1, 2].map((i) => <Skeleton key={i} height="h-32" radius="rounded-xl" />)}
       </div>
-      <div className="grid grid-cols-[1fr_360px] gap-5">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px] xl:gap-5">
         <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-6">
           <Skeleton height="h-5" width="w-48" />
           <Skeleton lines={5} height="h-14" gap="gap-3" radius="rounded-lg" />
@@ -65,14 +65,14 @@ export function Dashboard() {
   )
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-3 gap-5">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
         <SummaryCard label="SALDO TOTAL"     value={formatCurrency(balance)} icon={<Wallet className="h-5 w-5 text-violet-500" />}       iconBg="bg-violet-50" iconShape="rounded-lg" />
         <SummaryCard label="RECEITAS DO MÊS" value={formatCurrency(income)}  icon={<ArrowUpCircle className="h-6 w-6 text-green-500" />}  iconBg="" />
         <SummaryCard label="DESPESAS DO MÊS" value={formatCurrency(expense)} icon={<ArrowDownCircle className="h-6 w-6 text-red-500" />}  iconBg="" />
       </div>
 
-      <div className="grid grid-cols-[1fr_360px] gap-5">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px] xl:gap-5">
         <div className="rounded-xl border border-gray-200 bg-white">
           <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
             <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Transações recentes</span>

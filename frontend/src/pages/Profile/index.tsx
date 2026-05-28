@@ -26,8 +26,8 @@ export function Profile() {
   }
 
   return (
-    <div className="flex justify-center py-8">
-      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8">
+    <div className="flex justify-center py-4 sm:py-8">
+      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
         <div className="mb-6 flex flex-col items-center gap-2">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 text-xl font-bold text-gray-600">
             {initials}

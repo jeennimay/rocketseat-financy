@@ -84,8 +84,8 @@ export function Transactions() {
   function handleClose() { setOpen(false); setEditing(null) }
 
   if (loading) return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-start justify-between">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
           <Skeleton height="h-8" width="w-40" />
           <Skeleton height="h-4" width="w-72" />
@@ -93,7 +93,7 @@ export function Transactions() {
         <Skeleton height="h-10" width="w-40" radius="rounded-lg" />
       </div>
       <div className="rounded-xl border border-gray-200 bg-white px-5 py-4">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {[0, 1, 2, 3].map((i) => <Skeleton key={i} height="h-10" radius="rounded-lg" />)}
         </div>
       </div>
@@ -109,16 +109,16 @@ export function Transactions() {
   const thCls = 'px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-400'
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 sm:gap-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Transações</h1>
           <p className="mt-0.5 text-sm text-gray-500">Gerencie todas as suas transações financeiras</p>
         </div>
         <button
           onClick={() => setOpen(true)}
-          className="flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-800 transition-colors"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-800 transition-colors sm:w-auto"
         >
           <Plus className="h-4 w-4" /> Nova transação
         </button>
@@ -126,7 +126,7 @@ export function Transactions() {
 
       {/* Filtros */}
       <div className="rounded-xl border border-gray-200 bg-white px-5 py-4">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {/* Buscar */}
           <div>
             <p className={labelCls}>Buscar</p>
