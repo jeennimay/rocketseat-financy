@@ -81,22 +81,33 @@ export function TransactionDialog({ open, onClose, transaction }: Props) {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5 pt-1">
 
-          {/* Toggle — segmented control */}
-          <div className="flex rounded-xl border border-gray-200 p-1 gap-1">
-            <button type="button" onClick={() => setType("expense")}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-colors ${
+          {/* Toggle — segmented control com slider */}
+          <div className="relative flex rounded-xl border border-gray-200 p-1">
+            {/* Thumb deslizante */}
+            <span
+              aria-hidden="true"
+              className={`absolute inset-y-1 w-[calc(50%-4px)] rounded-lg border transition-all duration-300 ease-in-out ${
                 type === "expense"
-                  ? "border border-red-300 bg-red-50 text-red-600"
-                  : "text-gray-400 hover:bg-gray-50"
-              }`}>
+                  ? "left-1 bg-red-50 border-red-300"
+                  : "left-1/2 bg-green-50 border-green-400"
+              }`}
+            />
+            <button
+              type="button"
+              onClick={() => setType("expense")}
+              className={`relative z-10 flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-colors duration-300 ${
+                type === "expense" ? "text-red-600" : "text-gray-400"
+              }`}
+            >
               <CircleArrowDown className="h-4 w-4" /> Despesa
             </button>
-            <button type="button" onClick={() => setType("income")}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-colors ${
-                type === "income"
-                  ? "border border-green-400 bg-green-50 text-green-700"
-                  : "text-gray-400 hover:bg-gray-50"
-              }`}>
+            <button
+              type="button"
+              onClick={() => setType("income")}
+              className={`relative z-10 flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-colors duration-300 ${
+                type === "income" ? "text-green-700" : "text-gray-400"
+              }`}
+            >
               <CircleDollarSign className="h-4 w-4" /> Receita
             </button>
           </div>
