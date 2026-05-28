@@ -2,9 +2,11 @@ import { Navigate, Route, Routes } from "react-router-dom"
 import { Layout } from "@/components/Layout"
 import { Login } from "./pages/Auth/Login"
 import { Signup } from "./pages/Auth/Signup"
-import { IdeasPage } from "./pages/Ideias"
+import { Dashboard } from "./pages/Dashboard"
+import { Transactions } from "./pages/Transactions"
+import { Categories } from "./pages/Categories"
+import { Profile } from "./pages/Profile"
 import { useAuthStore } from "./stores/auth"
-import { Members } from "./pages/Members"
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore()
@@ -20,38 +22,12 @@ function App() {
   return (
     <Layout>
       <Routes>
-        <Route
-          path="/login"
-          element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <PublicRoute>
-              <Signup />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <IdeasPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/members"
-          element={
-            <ProtectedRoute>
-              <Members />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
+        <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+        <Route path="/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
     </Layout>
   )

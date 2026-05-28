@@ -1,71 +1,58 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuthStore } from "../stores/auth"
-import logoIcon from "@/assets/logo-icon.svg"
-import { Button } from "./ui/button"
-import { Lightbulb, LogOut, Users } from "lucide-react"
+import logo from "@/assets/logo.svg"
 import { Avatar, AvatarFallback } from "./ui/avatar"
 
 export function Header() {
-  const { user, logout, isAuthenticated } = useAuthStore()
+  const { user, isAuthenticated } = useAuthStore()
   const location = useLocation()
   const navigate = useNavigate()
-  const isIdeasPage = location.pathname === "/"
-  const isMembersPage = location.pathname === "/members"
 
-  const handleLogout = () => {
-    logout()
-    navigate("/login")
-  }
+  const navItems = [
+    { path: "/", label: "Dashboard" },
+    { path: "/transactions", label: "Transações" },
+    { path: "/categories", label: "Categorias" },
+  ]
+
+  if (!isAuthenticated) return null
 
   return (
-    <div className="w-full px-16 pt-6">
-      {isAuthenticated && (
-        <div className="flex justify-between w-full">
-          <div className="min-w-48">
-            <img src={logoIcon} />
-          </div>
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <Button
-                size="sm"
-                className="gap-2"
-                variant={isIdeasPage ? "default" : "ghost"}
+    <header className="w-full border-b border-gray-200 bg-white">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-8">
+        <Link to="/">
+          <img src={logo} alt="Financy" className="h-7" />
+        </Link>
+
+        <nav className="flex items-center gap-6">
+          {navItems.map(({ path, label }) => {
+            const active = location.pathname === path
+            return (
+              <Link
+                key={path}
+                to={path}
+                className={`text-sm font-medium transition-colors ${
+                  active ? "text-green-700 font-semibold" : "text-gray-500 hover:text-gray-800"
+                }`}
               >
-                <Lightbulb className="h-4 w-4" />
-                Ideais
-              </Button>
-            </Link>
-            <Link to="/members">
-              <Button
-                size="sm"
-                className="gap-2"
-                variant={isMembersPage ? "default" : "ghost"}
-              >
-                <Users className="h-4 w-4" />
-                Membros
-              </Button>
-            </Link>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <Avatar>
-                <AvatarFallback className="bg-zinc-950 text-primary-foreground">
-                  {user?.name?.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">{user?.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {user?.email}
-                </span>
-              </div>
-            </div>
-            <Button variant="ghost" size="icon" onClick={handleLogout}>
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
+                {label}
+              </Link>
+            )
+          })}
+        </nav>
+
+        <button onClick={() => navigate("/profile")}>
+          <Avatar className="h-9 w-9 cursor-pointer">
+            <AvatarFallback className="bg-gray-300 text-gray-700 text-sm font-semibold">
+              {user?.name
+                ?.split(" ")
+                .map((n) => n[0])
+                .slice(0, 2)
+                .join("")
+                .toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </button>
+      </div>
+    </header>
   )
 }

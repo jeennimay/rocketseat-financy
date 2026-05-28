@@ -18,7 +18,7 @@ export class CategoryResolver {
   @Query(() => CategoryModel)
   @UseMiddleware(IsAuth)
   async getCategory(
-    @Arg('id') id: string,
+    @Arg('id', () => String) id: string,
     @Ctx() ctx: GraphqlContext
   ): Promise<CategoryModel> {
     return this.service.getById(id, ctx.user!)
@@ -27,7 +27,7 @@ export class CategoryResolver {
   @Mutation(() => CategoryModel)
   @UseMiddleware(IsAuth)
   async createCategory(
-    @Arg('data') data: CreateCategoryInput,
+    @Arg('data', () => CreateCategoryInput) data: CreateCategoryInput,
     @Ctx() ctx: GraphqlContext
   ): Promise<CategoryModel> {
     return this.service.create(data, ctx.user!)
@@ -36,8 +36,8 @@ export class CategoryResolver {
   @Mutation(() => CategoryModel)
   @UseMiddleware(IsAuth)
   async updateCategory(
-    @Arg('id') id: string,
-    @Arg('data') data: UpdateCategoryInput,
+    @Arg('id', () => String) id: string,
+    @Arg('data', () => UpdateCategoryInput) data: UpdateCategoryInput,
     @Ctx() ctx: GraphqlContext
   ): Promise<CategoryModel> {
     return this.service.update(id, data, ctx.user!)
@@ -46,7 +46,7 @@ export class CategoryResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(IsAuth)
   async deleteCategory(
-    @Arg('id') id: string,
+    @Arg('id', () => String) id: string,
     @Ctx() ctx: GraphqlContext
   ): Promise<boolean> {
     return this.service.delete(id, ctx.user!)

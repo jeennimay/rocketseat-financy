@@ -18,7 +18,7 @@ export class TransactionResolver {
   @Query(() => TransactionModel)
   @UseMiddleware(IsAuth)
   async getTransaction(
-    @Arg('id') id: string,
+    @Arg('id', () => String) id: string,
     @Ctx() ctx: GraphqlContext
   ): Promise<TransactionModel> {
     return this.service.getById(id, ctx.user!)
@@ -27,7 +27,7 @@ export class TransactionResolver {
   @Mutation(() => TransactionModel)
   @UseMiddleware(IsAuth)
   async createTransaction(
-    @Arg('data') data: CreateTransactionInput,
+    @Arg('data', () => CreateTransactionInput) data: CreateTransactionInput,
     @Ctx() ctx: GraphqlContext
   ): Promise<TransactionModel> {
     return this.service.create(data, ctx.user!)
@@ -36,8 +36,8 @@ export class TransactionResolver {
   @Mutation(() => TransactionModel)
   @UseMiddleware(IsAuth)
   async updateTransaction(
-    @Arg('id') id: string,
-    @Arg('data') data: UpdateTransactionInput,
+    @Arg('id', () => String) id: string,
+    @Arg('data', () => UpdateTransactionInput) data: UpdateTransactionInput,
     @Ctx() ctx: GraphqlContext
   ): Promise<TransactionModel> {
     return this.service.update(id, data, ctx.user!)
@@ -46,7 +46,7 @@ export class TransactionResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(IsAuth)
   async deleteTransaction(
-    @Arg('id') id: string,
+    @Arg('id', () => String) id: string,
     @Ctx() ctx: GraphqlContext
   ): Promise<boolean> {
     return this.service.delete(id, ctx.user!)
