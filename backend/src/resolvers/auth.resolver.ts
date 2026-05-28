@@ -1,7 +1,10 @@
-import { Arg, Mutation, Resolver, UseMiddleware } from 'type-graphql'
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql'
 import { LoginInput, RegisterInput } from '../dtos/input/auth.input'
 import { LoginOutput, RegisterOutput } from '../dtos/output/auth.output'
 import { AuthService } from '../services/auth.service'
+import { UserModel } from '../models/user.model'
+import { GraphqlContext } from '../graphql/context'
+import { IsAuth } from '../middlewares/auth.middleware'
 
 @Resolver()
 export class AuthResolver {
@@ -19,5 +22,11 @@ export class AuthResolver {
     @Arg('data', () => RegisterInput) data: RegisterInput
   ): Promise<RegisterOutput> {
     return this.authService.register(data)
+  }
+
+  @Query(() => UserModel)
+  @UseMiddleware(IsAuth)
+  async me(@Ctx() ctx: GraphqlContext): Promise<UserModel> {
+    return this.authService.me(ctx.user!)
   }
 }

@@ -1,15 +1,11 @@
 {
-  "name": "mindshare",
+  "name": "financy-backend",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "seed": "tsx prisma/seed.ts",
     "migrate": "prisma migrate dev",
     "generate": "prisma generate"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   },
   "keywords": [],
   "author": "",

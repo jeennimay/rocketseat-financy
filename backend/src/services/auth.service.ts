@@ -37,6 +37,12 @@ export class AuthService {
     return this.gerenerateTokens(user)
   }
 
+  async me(userId: string): Promise<UserModel> {
+    const user = await prismaClient.user.findUnique({ where: { id: userId } })
+    if (!user) throw new Error('Usuário não encontrado!')
+    return user
+  }
+
   gerenerateTokens(user: UserModel) {
     const token = signJwt({ id: user.id, email: user.email }, '1d')
     const refreshToken = signJwt({ id: user.id, email: user.email }, '1d')
