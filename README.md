@@ -98,6 +98,7 @@ rocketseat-financy/
 - **Node.js 18+** — [nodejs.org](https://nodejs.org)
 - **npm 9+** — incluso com o Node.js
 - **Git**
+- **Git Bash** (Windows) — para executar o script `.sh`
 
 ### 1. Clonar o repositório
 
@@ -107,6 +108,33 @@ cd rocketseat-financy
 ```
 
 ---
+
+### ⚡ Atalho — script `start.sh`
+
+O projeto inclui um script que automatiza setup, inicialização e testes:
+
+```bash
+# Primeira vez: instala deps, cria .env e roda migrations
+./start.sh setup
+
+# Inicia backend (:4000) e frontend (:5173) juntos
+./start.sh dev
+
+# Para todos os servidores
+./start.sh stop
+
+# Roda testes unitários (backend + frontend)
+./start.sh test
+
+# Roda testes E2E — sobe os servidores automaticamente se necessário
+./start.sh e2e
+```
+
+> **Windows:** abra o **Git Bash** e execute `./start.sh <comando>`.
+
+---
+
+### Passo a passo manual
 
 ### 2. Configurar e iniciar o Backend
 
