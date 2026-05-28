@@ -106,7 +106,7 @@ export function Transactions() {
     </div>
   )
 
-  const COLS = 'grid-cols-[3fr_minmax(90px,1fr)_minmax(130px,1.5fr)_minmax(100px,1fr)_minmax(130px,1.5fr)_80px]'
+  const COLS = 'grid-cols-[minmax(0,2fr)_minmax(70px,1fr)_minmax(100px,1.5fr)_minmax(80px,1fr)_minmax(100px,1.5fr)_64px]'
 
   return (
     <div className="flex flex-col gap-6">
@@ -170,9 +170,9 @@ export function Transactions() {
       </div>
 
       {/* Tabela */}
-      <div className="rounded-xl border border-gray-200 bg-white">
+      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
         {/* Cabeçalho */}
-        <div className={`grid ${COLS} border-b border-gray-100 px-6 py-3`}>
+        <div className={`grid ${COLS} border-b border-gray-100 px-6 py-3 min-w-[700px]`}>
           {['DESCRIÇÃO', 'DATA', 'CATEGORIA', 'TIPO', 'VALOR', 'AÇÕES'].map((h) => (
             <span key={h} className="text-xs font-semibold uppercase tracking-wide text-gray-400">{h}</span>
           ))}
@@ -182,11 +182,11 @@ export function Transactions() {
           <p className="px-6 py-10 text-sm text-gray-400">Nenhuma transação encontrada.</p>
         ) : (
           paged.map((t) => (
-            <div key={t.id} className={`grid ${COLS} items-center border-b border-gray-100 px-6 py-5 hover:bg-gray-50 transition-colors`}>
+            <div key={t.id} className={`grid ${COLS} items-center border-b border-gray-100 px-6 py-5 min-w-[700px] hover:bg-gray-50 transition-colors`}>
               {/* Descrição */}
               <div className="flex items-center gap-3 min-w-0">
                 <CategoryIcon icon={t.category?.icon} color={t.category?.color} size="sm" />
-                <span className="truncate text-sm font-medium text-gray-900">{t.description}</span>
+                <span className="truncate text-sm font-medium text-gray-900" title={t.description}>{t.description}</span>
               </div>
               {/* Data */}
               <span className="text-sm text-gray-500">
@@ -205,14 +205,16 @@ export function Transactions() {
                   : <span className="flex items-center gap-1 text-xs font-medium text-red-500"><CircleArrowDown className="h-3.5 w-3.5" /> Saída</span>}
               </div>
               {/* Valor */}
-              <div className="px-6 text-right text-sm font-semibold tabular-nums text-gray-900">
+              <div className="text-right text-sm font-semibold tabular-nums text-gray-900 whitespace-nowrap">
                 {t.type === 'income' ? '+' : '-'} {formatCurrency(t.amount)}
               </div>
               {/* Ações */}
-              <ActionButtons
-                onDelete={() => deleteTransaction({ variables: { id: t.id } })}
-                onEdit={() => handleEdit(t)}
-              />
+              <div className="flex items-center justify-end">
+                <ActionButtons
+                  onDelete={() => deleteTransaction({ variables: { id: t.id } })}
+                  onEdit={() => handleEdit(t)}
+                />
+              </div>
             </div>
           ))
         )}
