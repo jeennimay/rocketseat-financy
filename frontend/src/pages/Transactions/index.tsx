@@ -106,9 +106,7 @@ export function Transactions() {
     </div>
   )
 
-  // Colunas: descrição fluida | data | categoria | tipo | valor | ações (fixas com mínimos)
-  const COLS = 'grid-cols-[minmax(0,1fr)_80px_120px_100px_120px_76px]'
-  const ROW  = `grid ${COLS} gap-x-2 items-center px-6 min-w-[700px]`
+  const thCls = 'px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-400'
 
   return (
     <div className="flex flex-col gap-6">
@@ -173,58 +171,80 @@ export function Transactions() {
 
       {/* Tabela */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
-        {/* Cabeçalho */}
-        <div className={`${ROW} border-b border-gray-100 py-3`}>
-          <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">DESCRIÇÃO</span>
-          <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">DATA</span>
-          <span className="text-center text-xs font-semibold uppercase tracking-wide text-gray-400">CATEGORIA</span>
-          <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">TIPO</span>
-          <span className="text-right text-xs font-semibold uppercase tracking-wide text-gray-400">VALOR</span>
-          <span className="text-center text-xs font-semibold uppercase tracking-wide text-gray-400">AÇÕES</span>
-        </div>
+        <table className="w-full border-collapse">
+          <colgroup>
+            <col />                        {/* Descrição — fluida */}
+            <col className="w-24" />       {/* Data */}
+            <col className="w-36" />       {/* Categoria */}
+            <col className="w-28" />       {/* Tipo */}
+            <col className="w-32" />       {/* Valor */}
+            <col className="w-24" />       {/* Ações */}
+          </colgroup>
 
-        {paged.length === 0 ? (
-          <p className="px-6 py-10 text-sm text-gray-400">Nenhuma transação encontrada.</p>
-        ) : (
-          paged.map((t) => (
-            <div key={t.id} className={`${ROW} border-b border-gray-100 py-5 hover:bg-gray-50 transition-colors`}>
-              {/* Descrição — fluida com ellipsis */}
-              <div className="flex items-center gap-3 min-w-0">
-                <CategoryIcon icon={t.category?.icon} color={t.category?.color} size="sm" />
-                <span className="truncate text-sm font-medium text-gray-900" title={t.description}>
-                  {t.description}
-                </span>
-              </div>
-              {/* Data */}
-              <span className="text-sm text-gray-500 whitespace-nowrap">
-                {formatDate(t.date, { day: '2-digit', month: '2-digit', year: '2-digit' })}
-              </span>
-              {/* Categoria */}
-              <div className="flex justify-center">
-                {t.category
-                  ? <Badge name={t.category.name} color={t.category.color} />
-                  : <span className="text-xs text-gray-400">—</span>}
-              </div>
-              {/* Tipo */}
-              <div className="flex items-center gap-1.5">
-                {t.type === 'income'
-                  ? <span className="flex items-center gap-1 text-xs font-medium text-green-600"><CircleArrowUp className="h-3.5 w-3.5" /> Entrada</span>
-                  : <span className="flex items-center gap-1 text-xs font-medium text-red-500"><CircleArrowDown className="h-3.5 w-3.5" /> Saída</span>}
-              </div>
-              {/* Valor */}
-              <div className="text-right text-sm font-semibold tabular-nums text-gray-900 whitespace-nowrap">
-                {t.type === 'income' ? '+' : '-'} {formatCurrency(t.amount)}
-              </div>
-              {/* Ações */}
-              <div className="flex items-center justify-end">
-                <ActionButtons
-                  onDelete={() => deleteTransaction({ variables: { id: t.id } })}
-                  onEdit={() => handleEdit(t)}
-                />
-              </div>
-            </div>
-          ))
-        )}
+          <thead>
+            <tr className="border-b border-gray-100">
+              <th className={`${thCls} text-left`}>Descrição</th>
+              <th className={`${thCls} text-left`}>Data</th>
+              <th className={`${thCls} text-center`}>Categoria</th>
+              <th className={`${thCls} text-left`}>Tipo</th>
+              <th className={`${thCls} text-right`}>Valor</th>
+              <th className={`${thCls} text-center`}>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {paged.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-10 text-sm text-gray-400">
+                  Nenhuma transação encontrada.
+                </td>
+              </tr>
+            ) : (
+              paged.map((t) => (
+                <tr key={t.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  {/* Descrição */}
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <CategoryIcon icon={t.category?.icon} color={t.category?.color} size="sm" />
+                      <span className="truncate text-sm font-medium text-gray-900" title={t.description}>
+                        {t.description}
+                      </span>
+                    </div>
+                  </td>
+                  {/* Data */}
+                  <td className="px-6 py-5 text-sm text-gray-500 whitespace-nowrap">
+                    {formatDate(t.date, { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                  </td>
+                  {/* Categoria */}
+                  <td className="px-6 py-5 text-center">
+                    {t.category
+                      ? <Badge name={t.category.name} color={t.category.color} />
+                      : <span className="text-xs text-gray-400">—</span>}
+                  </td>
+                  {/* Tipo */}
+                  <td className="px-6 py-5">
+                    {t.type === 'income'
+                      ? <span className="flex items-center gap-1 text-xs font-medium text-green-600"><CircleArrowUp className="h-3.5 w-3.5" /> Entrada</span>
+                      : <span className="flex items-center gap-1 text-xs font-medium text-red-500"><CircleArrowDown className="h-3.5 w-3.5" /> Saída</span>}
+                  </td>
+                  {/* Valor */}
+                  <td className="px-6 py-5 text-right text-sm font-semibold tabular-nums text-gray-900 whitespace-nowrap">
+                    {t.type === 'income' ? '+' : '-'} {formatCurrency(t.amount)}
+                  </td>
+                  {/* Ações */}
+                  <td className="px-6 py-5">
+                    <div className="flex items-center justify-center gap-1">
+                      <ActionButtons
+                        onDelete={() => deleteTransaction({ variables: { id: t.id } })}
+                        onEdit={() => handleEdit(t)}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
 
         {/* Paginação */}
         <div className="flex items-center justify-between px-6 py-4">
