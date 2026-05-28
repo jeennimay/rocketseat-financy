@@ -94,49 +94,118 @@ rocketseat-financy/
 ## Como Executar
 
 ### Pré-requisitos
-- Node.js 18+
-- npm 9+
 
-### Backend
+- **Node.js 18+** — [nodejs.org](https://nodejs.org)
+- **npm 9+** — incluso com o Node.js
+- **Git**
+
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/jeennimay/rocketseat-financy.git
+cd rocketseat-financy
+```
+
+---
+
+### 2. Configurar e iniciar o Backend
 
 ```bash
 cd backend
-cp .env.example .env       # configure JWT_SECRET
-npm install
-npm run migrate            # cria o banco SQLite e roda migrations
-npm run dev                # http://localhost:4000/graphql
+
+# Copiar o arquivo de variáveis de ambiente
+# Linux/Mac:
+cp .env.example .env
+# Windows (cmd):
+copy .env.example .env
+# Windows (PowerShell):
+Copy-Item .env.example .env
 ```
 
-### Frontend
+Abra o `.env` e preencha o `JWT_SECRET` com qualquer string segura:
+
+```env
+JWT_SECRET=minha-chave-secreta-aqui
+DATABASE_URL=file:./prisma/dev.db
+CORS_ORIGIN=http://localhost:5173
+```
+
+```bash
+npm install                # instala dependências
+npm run migrate            # cria o banco SQLite e aplica as migrations
+npm run dev                # inicia o servidor em http://localhost:4000/graphql
+```
+
+> O Sandbox do Apollo estará disponível em `http://localhost:4000/graphql` para explorar a API.
+
+---
+
+### 3. Configurar e iniciar o Frontend
+
+Abra um **novo terminal** na raiz do projeto:
 
 ```bash
 cd frontend
-cp .env.example .env       # VITE_BACKEND_URL=http://localhost:4000
-npm install
-npm run dev                # http://localhost:5173
+
+# Copiar o arquivo de variáveis de ambiente
+# Linux/Mac:
+cp .env.example .env
+# Windows (cmd):
+copy .env.example .env
+# Windows (PowerShell):
+Copy-Item .env.example .env
 ```
+
+O `.env` gerado já vem com o valor correto:
+
+```env
+VITE_BACKEND_URL=http://localhost:4000
+```
+
+```bash
+npm install    # instala dependências
+npm run dev    # inicia o app em http://localhost:5173
+```
+
+Acesse **http://localhost:5173** no navegador.
+
+---
 
 ## Testes
 
-### Backend (Jest — unitários)
+### Backend — unitários (Jest)
+
 ```bash
 cd backend
 npm test
-# 48 testes | 6 suites
+# Resultado esperado: 48 testes | 6 suites — todos passando
 ```
 
-### Frontend (Jest + RTL — unitários)
+### Frontend — unitários (Jest + React Testing Library)
+
 ```bash
 cd frontend
 npm test
-# 45 testes | 8 suites
+# Resultado esperado: 45 testes | 8 suites — todos passando
 ```
 
-### E2E (Playwright — integração)
+### E2E — integração (Playwright)
+
+> **Pré-requisito:** backend (porta 4000) e frontend (porta 5173) devem estar rodando.
+
 ```bash
-# Com os dois servidores rodando:
 cd e2e
-npm test
+npm install                      # instala @playwright/test
+npx playwright install chromium  # baixa o browser (somente na primeira vez)
+npm test                         # executa todos os testes E2E
+```
+
+Outros comandos úteis:
+
+```bash
+npm run test:headed   # executa com janela do browser visível
+npm run test:ui       # abre a interface interativa do Playwright
+npm run test:report   # abre o relatório HTML do último run
 ```
 
 ## Variáveis de Ambiente
