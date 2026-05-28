@@ -72,13 +72,14 @@ export function Categories() {
         <SummaryCard
           label="TOTAL DE CATEGORIAS"
           value={categories.length}
-          icon={<Tag className="h-5 w-5 text-gray-500" />}
+          icon={<Tag className="h-5 w-5" />}
+          iconBg=""
         />
         <SummaryCard
           label="TOTAL DE TRANSAÇÕES"
           value={transactions.length}
-          icon={<ArrowLeftRight className="h-5 w-5 text-blue-500" />}
-          iconBg="bg-blue-50"
+          icon={<ArrowLeftRight className="h-5 w-5" />}
+          iconBg=""
         />
         <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-5">
           {mostUsed ? (

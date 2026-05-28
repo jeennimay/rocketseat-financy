@@ -159,7 +159,7 @@ export function Transactions() {
           <p className="px-6 py-10 text-sm text-gray-400">Nenhuma transação encontrada.</p>
         ) : (
           paged.map((t) => (
-            <div key={t.id} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_80px] items-center border-b border-gray-50 px-6 py-3.5 hover:bg-gray-50 transition-colors">
+            <div key={t.id} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_80px] items-center border-b border-gray-100 px-6 py-3.5 hover:bg-gray-50 transition-colors">
               <div className="flex items-center gap-3">
                 <CategoryIcon icon={t.category?.icon} color={t.category?.color} size="sm" />
                 <span className="text-sm font-medium text-gray-900">{t.description}</span>

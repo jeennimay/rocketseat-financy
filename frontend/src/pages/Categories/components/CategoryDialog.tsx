@@ -19,7 +19,7 @@ export function CategoryDialog({ open, onClose, category }: Props) {
   const isEditing = !!category
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
-  const [icon, setIcon] = useState("Tag")
+  const [icon, setIcon] = useState("")
   const [color, setColor] = useState(COLORS[0])
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export function CategoryDialog({ open, onClose, category }: Props) {
       setIcon(category.icon ?? "Tag")
       setColor(category.color ?? COLORS[0])
     } else {
-      setName(""); setDescription(""); setIcon("Tag"); setColor(COLORS[0])
+      setName(""); setDescription(""); setIcon(""); setColor(COLORS[0])
     }
   }, [category, open])
 

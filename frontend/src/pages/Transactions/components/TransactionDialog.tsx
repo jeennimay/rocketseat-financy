@@ -37,7 +37,7 @@ export function TransactionDialog({ open, onClose, transaction }: Props) {
       setCategoryId(transaction.categoryId ?? "")
     } else {
       setDescription(""); setAmount(""); setType("expense")
-      setDate(new Date().toISOString().slice(0, 10)); setCategoryId("")
+      setDate(""); setCategoryId("")
     }
   }, [transaction, open])
 

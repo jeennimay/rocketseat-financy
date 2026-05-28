@@ -96,6 +96,21 @@ async function main() {
     { description: 'Plano de Saúde',        amount:  380.00, type: 'expense', date: d(2026,  1,  5), categoryId: sau.id },
     { description: 'Netflix',               amount:   55.90, type: 'expense', date: d(2026,  1, 10), categoryId: ent.id },
     { description: 'Calçado - Nike',        amount:  459.00, type: 'expense', date: d(2026,  1, 25), categoryId: comp.id },
+
+    // ─── Maio 2026 (mês atual) ────────────────────────────
+    { description: 'Salário Maio',          amount: 6500.00, type: 'income',  date: d(2026,  5,  5), categoryId: sal.id },
+    { description: 'Freelance App',         amount: 1800.00, type: 'income',  date: d(2026,  5, 10), categoryId: sal.id },
+    { description: 'Rendimento FII',        amount:  290.00, type: 'income',  date: d(2026,  5, 15), categoryId: inv.id },
+    { description: 'Aluguel',               amount: 1800.00, type: 'expense', date: d(2026,  5,  5), categoryId: mor.id },
+    { description: 'Conta de Luz',          amount:  122.40, type: 'expense', date: d(2026,  5,  8), categoryId: mor.id },
+    { description: 'Internet',              amount:   99.90, type: 'expense', date: d(2026,  5, 10), categoryId: mor.id },
+    { description: 'Supermercado',          amount:  389.50, type: 'expense', date: d(2026,  5,  7), categoryId: ali.id },
+    { description: 'iFood - Almoço',        amount:   62.90, type: 'expense', date: d(2026,  5, 13), categoryId: ali.id },
+    { description: 'Gasolina',              amount:  270.00, type: 'expense', date: d(2026,  5,  4), categoryId: trans.id },
+    { description: 'Uber',                  amount:   38.50, type: 'expense', date: d(2026,  5, 20), categoryId: trans.id },
+    { description: 'Consulta Médica',       amount:  200.00, type: 'expense', date: d(2026,  5, 18), categoryId: sau.id },
+    { description: 'Netflix',               amount:   55.90, type: 'expense', date: d(2026,  5, 10), categoryId: ent.id },
+    { description: 'Camisa - Farm',         amount:  189.00, type: 'expense', date: d(2026,  5, 22), categoryId: comp.id },
   ]
 
   await prisma.transaction.createMany({
