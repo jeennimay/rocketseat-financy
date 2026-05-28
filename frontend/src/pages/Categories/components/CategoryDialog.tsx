@@ -15,18 +15,21 @@ interface Props {
 
 const COLORS = ["#1F6F43", "#2563EB", "#7C3AED", "#DB2777", "#DC2626", "#EA580C", "#CA8A04"]
 
+const inputCls = "rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-green-600 transition-colors"
+const labelCls = "text-sm font-medium text-gray-700"
+
 export function CategoryDialog({ open, onClose, category }: Props) {
   const isEditing = !!category
-  const [name, setName] = useState("")
+  const [name, setName]               = useState("")
   const [description, setDescription] = useState("")
-  const [icon, setIcon] = useState("")
-  const [color, setColor] = useState(COLORS[0])
+  const [icon, setIcon]               = useState("")
+  const [color, setColor]             = useState(COLORS[0])
 
   useEffect(() => {
     if (category) {
       setName(category.name)
       setDescription(category.description ?? "")
-      setIcon(category.icon ?? "Tag")
+      setIcon(category.icon ?? "")
       setColor(category.color ?? COLORS[0])
     } else {
       setName(""); setDescription(""); setIcon(""); setColor(COLORS[0])
@@ -65,46 +68,75 @@ export function CategoryDialog({ open, onClose, category }: Props) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 pt-1">
+
+          {/* Título */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Título</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Ex. Alimentação"
-              className="rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-green-600" />
+            <label className={labelCls}>Título</label>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              placeholder="Ex. Alimentação"
+              className={`${inputCls} w-full`}
+            />
           </div>
 
+          {/* Descrição */}
           <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-700">Descrição</label>
-              <span className="text-xs text-gray-400">Opcional</span>
-            </div>
-            <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Descrição da categoria"
-              className="rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-green-600" />
+            <label className={labelCls}>Descrição</label>
+            <input
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Descrição da categoria"
+              className={`${inputCls} w-full`}
+            />
+            <span className="text-xs text-gray-400">Opcional</span>
           </div>
 
+          {/* Ícone */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-700">Ícone</label>
+            <label className={labelCls}>Ícone</label>
             <div className="grid grid-cols-8 gap-1.5">
               {CATEGORY_ICONS.map(({ name: n, Icon }) => (
-                <button key={n} type="button" onClick={() => setIcon(n)}
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg border-2 transition-colors ${icon === n ? "border-green-600 bg-green-50" : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"}`}>
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setIcon(n)}
+                  className={`flex h-10 w-10 items-center justify-center rounded-lg border transition-colors ${
+                    icon === n
+                      ? "border-green-600 bg-green-50"
+                      : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
                   <Icon className="h-4 w-4" style={{ color: icon === n ? "#1F6F43" : "#6b7280" }} />
                 </button>
               ))}
             </div>
           </div>
 
+          {/* Cor — retângulos arredondados distribuídos igualmente */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-700">Cor</label>
-            <div className="flex items-center gap-2">
+            <label className={labelCls}>Cor</label>
+            <div className="flex gap-2">
               {COLORS.map((c) => (
-                <button key={c} type="button" onClick={() => setColor(c)}
-                  className={`h-8 w-8 rounded-full border-2 transition-transform hover:scale-110 ${color === c ? "border-gray-800 scale-110" : "border-transparent"}`}
-                  style={{ backgroundColor: c }} />
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setColor(c)}
+                  className={`h-9 flex-1 rounded-lg border-2 transition-all hover:scale-105 ${
+                    color === c ? "border-gray-700 scale-105" : "border-transparent"
+                  }`}
+                  style={{ backgroundColor: c }}
+                />
               ))}
             </div>
           </div>
 
-          <button type="submit" disabled={loading}
-            className="mt-1 w-full rounded-lg bg-green-700 py-3 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60 transition-colors">
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-1 w-full rounded-lg bg-green-700 py-3 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60 transition-colors"
+          >
             {loading ? "Salvando..." : "Salvar"}
           </button>
         </form>
