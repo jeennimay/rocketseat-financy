@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { LIST_CATEGORIES } from '@/lib/graphql/queries/categories'
 import type { Transaction, Category } from '@/types'
-import { Plus, Search, ChevronLeft, ChevronRight, CircleArrowDown, CircleArrowUp } from 'lucide-react'
+import { Plus, Search, ChevronLeft, ChevronRight, ChevronDown, CircleArrowDown, CircleArrowUp } from 'lucide-react'
 import { CategoryIcon } from '@/components/CategoryIcon'
 import { Badge } from '@/components/atoms/Badge'
 import { ActionButtons } from '@/components/molecules/ActionButtons'
@@ -15,6 +15,9 @@ import { Skeleton } from '@/components/atoms/Skeleton'
 type CatData = { listCategories: Category[] }
 
 const PAGE_SIZE = 10
+
+const selectCls = 'w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-green-600 transition-colors'
+const labelCls  = 'mb-1.5 text-sm font-medium text-gray-500'
 
 function buildPeriodOptions(transactions: Transaction[]) {
   const seen = new Set<string>()
@@ -30,6 +33,21 @@ function buildPeriodOptions(transactions: Transaction[]) {
     }
   }
   return opts
+}
+
+function FilterSelect({ value, onChange, children }: {
+  value: string
+  onChange: (v: string) => void
+  children: React.ReactNode
+}) {
+  return (
+    <div className="relative">
+      <select value={value} onChange={(e) => onChange(e.target.value)} className={selectCls}>
+        {children}
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+    </div>
+  )
 }
 
 export function Transactions() {
@@ -82,14 +100,17 @@ export function Transactions() {
       <div className="rounded-xl border border-gray-200 bg-white p-6 flex flex-col gap-3">
         <Skeleton height="h-8" radius="rounded-lg" />
         {Array.from({ length: PAGE_SIZE }, (_, i) => (
-          <Skeleton key={i} height="h-12" radius="rounded-lg" />
+          <Skeleton key={i} height="h-14" radius="rounded-lg" />
         ))}
       </div>
     </div>
   )
 
+  const COLS = 'grid-cols-[3fr_minmax(90px,1fr)_minmax(130px,1.5fr)_minmax(100px,1fr)_minmax(130px,1.5fr)_80px]'
+
   return (
     <div className="flex flex-col gap-6">
+      {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Transações</h1>
@@ -106,10 +127,11 @@ export function Transactions() {
       {/* Filtros */}
       <div className="rounded-xl border border-gray-200 bg-white px-5 py-4">
         <div className="grid grid-cols-4 gap-4">
+          {/* Buscar */}
           <div>
-            <p className="mb-1.5 text-xs font-medium text-gray-600">Buscar</p>
-            <div className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 focus-within:border-green-600">
-              <Search className="h-3.5 w-3.5 text-gray-400" />
+            <p className={labelCls}>Buscar</p>
+            <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2.5 focus-within:border-green-600 transition-colors">
+              <Search className="h-4 w-4 flex-shrink-0 text-gray-400" />
               <input
                 type="text"
                 placeholder="Buscar por descrição"
@@ -119,37 +141,38 @@ export function Transactions() {
               />
             </div>
           </div>
+          {/* Tipo */}
           <div>
-            <p className="mb-1.5 text-xs font-medium text-gray-600">Tipo</p>
-            <select value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(1) }}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-green-600">
+            <p className={labelCls}>Tipo</p>
+            <FilterSelect value={typeFilter} onChange={(v) => { setTypeFilter(v); setPage(1) }}>
               <option value="all">Todos</option>
               <option value="income">Entrada</option>
               <option value="expense">Saída</option>
-            </select>
+            </FilterSelect>
           </div>
+          {/* Categoria */}
           <div>
-            <p className="mb-1.5 text-xs font-medium text-gray-600">Categoria</p>
-            <select value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1) }}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-green-600">
+            <p className={labelCls}>Categoria</p>
+            <FilterSelect value={categoryFilter} onChange={(v) => { setCategoryFilter(v); setPage(1) }}>
               <option value="all">Todas</option>
               {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
+            </FilterSelect>
           </div>
+          {/* Período */}
           <div>
-            <p className="mb-1.5 text-xs font-medium text-gray-600">Período</p>
-            <select value={periodFilter} onChange={(e) => { setPeriodFilter(e.target.value); setPage(1) }}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-green-600">
+            <p className={labelCls}>Período</p>
+            <FilterSelect value={periodFilter} onChange={(v) => { setPeriodFilter(v); setPage(1) }}>
               <option value="all">Todos</option>
               {periodOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
+            </FilterSelect>
           </div>
         </div>
       </div>
 
       {/* Tabela */}
       <div className="rounded-xl border border-gray-200 bg-white">
-        <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_80px] border-b border-gray-100 px-6 py-3">
+        {/* Cabeçalho */}
+        <div className={`grid ${COLS} border-b border-gray-100 px-6 py-3`}>
           {['DESCRIÇÃO', 'DATA', 'CATEGORIA', 'TIPO', 'VALOR', 'AÇÕES'].map((h) => (
             <span key={h} className="text-xs font-semibold uppercase tracking-wide text-gray-400">{h}</span>
           ))}
@@ -159,23 +182,33 @@ export function Transactions() {
           <p className="px-6 py-10 text-sm text-gray-400">Nenhuma transação encontrada.</p>
         ) : (
           paged.map((t) => (
-            <div key={t.id} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_80px] items-center border-b border-gray-100 px-6 py-3.5 hover:bg-gray-50 transition-colors">
-              <div className="flex items-center gap-3">
+            <div key={t.id} className={`grid ${COLS} items-center border-b border-gray-100 px-6 py-5 hover:bg-gray-50 transition-colors`}>
+              {/* Descrição */}
+              <div className="flex items-center gap-3 min-w-0">
                 <CategoryIcon icon={t.category?.icon} color={t.category?.color} size="sm" />
-                <span className="text-sm font-medium text-gray-900">{t.description}</span>
+                <span className="truncate text-sm font-medium text-gray-900">{t.description}</span>
               </div>
+              {/* Data */}
               <span className="text-sm text-gray-500">
                 {formatDate(t.date, { day: '2-digit', month: '2-digit', year: '2-digit' })}
               </span>
-              <div>{t.category ? <Badge name={t.category.name} color={t.category.color} /> : <span className="text-xs text-gray-400">—</span>}</div>
+              {/* Categoria */}
+              <div className="flex justify-center">
+                {t.category
+                  ? <Badge name={t.category.name} color={t.category.color} />
+                  : <span className="text-xs text-gray-400">—</span>}
+              </div>
+              {/* Tipo */}
               <div className="flex items-center gap-1.5">
                 {t.type === 'income'
                   ? <span className="flex items-center gap-1 text-xs font-medium text-green-600"><CircleArrowUp className="h-3.5 w-3.5" /> Entrada</span>
                   : <span className="flex items-center gap-1 text-xs font-medium text-red-500"><CircleArrowDown className="h-3.5 w-3.5" /> Saída</span>}
               </div>
+              {/* Valor */}
               <span className={`text-sm font-semibold tabular-nums ${t.type === 'income' ? 'text-green-600' : 'text-red-500'}`}>
                 {t.type === 'income' ? '+' : '-'} {formatCurrency(t.amount)}
               </span>
+              {/* Ações */}
               <ActionButtons
                 onDelete={() => deleteTransaction({ variables: { id: t.id } })}
                 onEdit={() => handleEdit(t)}
@@ -185,8 +218,8 @@ export function Transactions() {
         )}
 
         {/* Paginação */}
-        <div className="flex items-center justify-between px-6 py-3">
-          <span className="text-xs text-gray-400">
+        <div className="flex items-center justify-between px-6 py-4">
+          <span className="text-sm text-gray-400">
             {filtered.length === 0 ? '0 resultados' : `${(page - 1) * PAGE_SIZE + 1} a ${Math.min(page * PAGE_SIZE, filtered.length)} | ${filtered.length} resultados`}
           </span>
           <div className="flex items-center gap-1">
