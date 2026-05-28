@@ -261,6 +261,15 @@ cmd_e2e() {
     || error   "Alguns testes E2E falharam."
 }
 
+cmd_seed() {
+  step "🌱  Populando banco com dados de demonstração"
+  check_node
+
+  [ ! -f "$BACKEND_DIR/.env" ] && error "Backend sem .env. Rode ./start.sh setup primeiro."
+
+  (cd "$BACKEND_DIR" && npm run seed)
+}
+
 cmd_help() {
   banner
   echo -e "${BOLD}Uso:${NC}  ./start.sh ${CYAN}[comando]${NC}"
@@ -269,6 +278,7 @@ cmd_help() {
   echo -e "  ${CYAN}setup${NC}   Instala dependências, cria .env e roda migrations (primeira vez)"
   echo -e "  ${CYAN}dev${NC}     Inicia backend (:${BACKEND_PORT}) e frontend (:${FRONTEND_PORT}) em paralelo"
   echo -e "  ${CYAN}stop${NC}    Para todos os servidores rodando"
+  echo -e "  ${CYAN}seed${NC}    Popula o banco com usuário demo e dados de exemplo"
   echo -e "  ${CYAN}test${NC}    Roda testes unitários do backend e frontend"
   echo -e "  ${CYAN}e2e${NC}     Roda testes E2E (sobe servidores automaticamente se necessário)"
   echo -e "  ${CYAN}help${NC}    Exibe esta ajuda"
@@ -276,6 +286,7 @@ cmd_help() {
   echo -e "${BOLD}Exemplos:${NC}"
   echo -e "  ${DIM}./start.sh setup   # primeira vez no projeto${NC}"
   echo -e "  ${DIM}./start.sh dev     # desenvolvimento do dia a dia${NC}"
+  echo -e "  ${DIM}./start.sh seed    # criar dados de demo${NC}"
   echo -e "  ${DIM}./start.sh test    # rodar testes unitários${NC}"
   echo -e "  ${DIM}./start.sh e2e     # rodar testes end-to-end${NC}"
   echo -e "  ${DIM}./start.sh stop    # encerrar tudo${NC}"
@@ -287,6 +298,7 @@ case "${1:-help}" in
   setup)          cmd_setup ;;
   dev|start)      cmd_dev   ;;
   stop|kill)      cmd_stop  ;;
+  seed)           cmd_seed  ;;
   test|tests)     cmd_test  ;;
   e2e)            cmd_e2e   ;;
   help|--help|-h) cmd_help  ;;
