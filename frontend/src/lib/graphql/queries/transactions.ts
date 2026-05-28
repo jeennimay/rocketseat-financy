@@ -13,6 +13,7 @@ export const LIST_TRANSACTIONS = gql`
         id
         name
         color
+        icon
       }
       createdAt
       updatedAt
@@ -33,6 +34,7 @@ export const GET_TRANSACTION = gql`
         id
         name
         color
+        icon
       }
       createdAt
       updatedAt
