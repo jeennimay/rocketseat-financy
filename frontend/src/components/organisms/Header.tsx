@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { useAuthStore } from "../stores/auth"
+import { useAuthStore } from "@/stores/auth"
 import logo from "@/assets/logo.svg"
-import { Avatar, AvatarFallback } from "./ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 export function Header() {
   const { user, isAuthenticated } = useAuthStore()
